@@ -1,6 +1,7 @@
 ### 1.wcf(webpack configuration )
 
-是对webpack的进一步封装，内部继续调用webpack完成构建
+ it is based webpack
 
+### using theme in package.json to override less variables
 
-### 通过package.json中theme来覆盖我们的less中的变量
+### in windows platform, we input ./bin/wcf directly in command line tools

@@ -1,26 +1,26 @@
 import webpackDefaultConfig from './getWebpackDefaultConfig';
-
-/**
+import mergeCustomConfig from './mergeWebpackConfig';
+import {path,resolve} from 'path';
+import webpack from 'webpack';
+/** 
  * @param  {[type]} 
  * @param  {Function} 
  * @return {[type]}
  */
 export default function build(program,callback){
-
- const defaultWebpackConfig=webpackDefaultConfig(program);
+ let defaultWebpackConfig=webpackDefaultConfig(program);
  //get default webpack configuration
- let webpackConfig={}
 
  if(program.outputPath){
- 	webpackConfig.output.path=program.outputPath;
+ 	defaultWebpackConfig.output.path=program.outputPath;
  }
  //update output path
 if(program.publichPath){
-	webpackConfig.output.publicPath = program.publicPath;
+	defaultWebpackConfig.output.publicPath = program.publicPath;
 }
 //update public path
  if (program.compress) {
-    webpackConfig.plugins = [...defaultWebpackConfig.plugins,
+    defaultWebpackConfig.plugins = [...defaultWebpackConfig.plugins,
       new webpack.optimize.UglifyJsPlugin({
       	 output: {
             ascii_only: true,
@@ -35,7 +35,7 @@ if(program.publichPath){
     ];
   } else {
     if (process.env.NODE_ENV) {
-      webpackConfig.plugins = [...defaultWebpackConfig.plugins,
+      defaultWebpackConfig.plugins = [...defaultWebpackConfig.plugins,
         new webpack.DefinePlugin({
           'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
         }),
@@ -45,18 +45,18 @@ if(program.publichPath){
 // update our plugins according to user's input compress config
 if (program.hash) {
 const pkg = require(join(program.cwd, 'package.json'));
-webpackConfig.output.filename = webpackConfig.output.chunkFilename = '[name]-[chunkhash].js';
+defaultWebpackConfig.output.filename = defaultWebpackConfig.output.chunkFilename = '[name]-[chunkhash].js';
 //we update filename width hash
 }
 
 if (typeof program.config === 'function') {
- webpackConfig = program.config(webpackConfig) || webpackConfig;
+ defaultWebpackConfig = program.config(defaultWebpackConfig) || defaultWebpackConfig;
 } else {
-  webpackConfig = mergeCustomConfig(webpackConfig, resolve(program.cwd, program.config || 'webpack.config.js'));
+  defaultWebpackConfig = mergeCustomConfig(defaultWebpackConfig, resolve(program.cwd, program.config || 'webpack.config.js'));
 }
 //if config parameter is a function ,invoke it. otherwise merge our custom configuration
  if (program.watch) {
-    [webpackConfig].forEach(config => {
+    [defaultWebpackConfig].forEach(config => {
       config.plugins.push(
         new ProgressPlugin((percentage, msg) => {
           const stream = process.stderr;
@@ -71,16 +71,21 @@ if (typeof program.config === 'function') {
       );
     });
   }
-  const compiler = webpack(webpackConfig);
+
+ console.log("defaultdefaultWebpackConfig------->",defaultWebpackConfig);
+
+  const compiler = webpack(defaultWebpackConfig);
   // Hack: remove extract-text-webpack-plugin log
   if (!program.verbose) {
     compiler.plugin('done', (stats) => {
-      stats.stats.forEach((stat) => {
-        //compilation.children是他所有依赖的模块信息
-        stat.compilation.children = stat.compilation.children.filter((child) => {
-          return child.name !== 'extract-text-webpack-plugin';
-        });
-      });
+        console.log('stats',stats);
+
+      // stats.stats.forEach((stat) => {
+      //   //compilation.children是他所有依赖的模块信息
+      //   stat.compilation.children = stat.compilation.children.filter((child) => {
+      //     return child.name !== 'extract-text-webpack-plugin';
+      //   });
+      // });
     });
   }
   //we watch file change
@@ -89,9 +94,9 @@ if (typeof program.config === 'function') {
   } else {
     compiler.run(doneHandler.bind(this));
   }
-
 }
 
 function doneHandler(err, stats) {
   console.log('resource rebuilt');
 }
+
