@@ -3,7 +3,7 @@ import { existsSync } from 'fs';
 import getDefaultBabelConfig from './getBabelDefaultConfig';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import webpack from 'webpack';
-
+import ImageminPlugin from 'imagemin-webpack-plugin';
 /**
  * [isWin : whether running in windows platform]
  * @return {Boolean} [description]
@@ -17,12 +17,20 @@ function isWin(){
  * @return {[string]} [prepended filepath]
  */
 function deltPathCwd(program,object){
-
   for(const key in object){
      const finalPath=isWin ? path.resolve(program.cwd,object[key]).split(path.sep).join("/") : path.resolve(program.cwd,object[key]);
      object[key]=finalPath;
   }
   return object; 
+}
+
+/**
+ * [isDevMode]
+ * @param  {[program]}  program [description]
+ * @return {Boolean}         [whether is in development mode]
+ */
+function isDevMode(program){
+   return !!program.dev;
 }
 
 /**
@@ -37,7 +45,7 @@ export default function getWebpackCommonConfig(program){
   const jsFileName = program.hash ? '[name]-[chunkhash].js' : '[name].js';
   const cssFileName = program.hash ? '[name]-[chunkhash].css' : '[name].css';
   const commonName = program.hash ? 'common-[chunkhash].js' : 'common.js';
-
+  const isDev = isDevMode(program);
   //override default vars of less files
   let theme = {};
   if (packageConfig.theme && typeof(packageConfig.theme) === 'string') {
@@ -52,16 +60,30 @@ export default function getWebpackCommonConfig(program){
   } else if (packageConfig.theme && typeof(packageConfig.theme) === 'object') {
     theme = packageConfig.theme;
   }
+ const lf=isWin() ? _path2.default.join(__dirname, '../node_modules').split(_path2.default.sep).join("/") :_path2.default.join(__dirname, '../node_modules');
+
   return {
    	output: {
       path: isWin() ? path.join(program.cwd, './dest/').split(path.sep).join("/") : path.join(program.cwd, './dest/') ,
       filename: jsFileName,
     },
-    devtool: program.devtool,
+    resolve:{
+     //  modules :["node_modules",path.join(__dirname, '../node_modules')],
+      // moduleDirectories : ["node_modules"],
+      // extensions: ['', '.web.jsx', '.web.js',  '.js', '.jsx', '.json'],
+      // last two configuration is for webpack1
+      // for detail :https://github.com/webpack/webpack/issues/472#issuecomment-55706013
+    },
+    devtool: program.devtool || "cheap-source-map",
     entry: deltPathCwd(program,packageConfig.entry),
     //prepend it with cwd
+    context:isWin() ? program.cwd.split(path.sep).join('/') : program.cwd,
+    //The base directory (absolute path!) for resolving the entry option
   	module: {
-	   rules: [{
+      noParse:[/jquery/],
+      //Prevent webpack from parsing any files matching the given regular expression(s)
+      //jquery has no other requires
+	    rules: [{
               test: /\.(png|jpg|jpeg|gif)(\?v=\d+\.\d+\.\d+)?$/i,
               use: {
               	 loader:'url-loader',
@@ -80,17 +102,21 @@ export default function getWebpackCommonConfig(program){
            		}
            	}
           },{
-	          test: /\.js$|\.jsx$/,
-	          exclude: /node_modules/,
-	          loader: require.resolve('babel-loader'),
+	          test: /\.js(x)*/,
+	          exclude: function(path){
+               var isNpmModule=!!path.match(/node_modules/);
+               return isNpmModule;
+            },
+            //exclude node_modules folder, or we can use include config to include some path 
+	          loader: 'babel-loader?cacheDirectory',
 	          query: getDefaultBabelConfig(),
 	        }, {
              	test:/\.less$/,
              	use:ExtractTextPlugin.extract({
                     fallback : 'style-loader',
-                    use :[
+                     use :[
                            {
-        			              loader: 'css-loader',
+        			              loader: lf+'/css-loader',
         			              options: { 
         			              	 sourceMap: true,
         			              	 importLoaders: 1 
@@ -100,6 +126,7 @@ export default function getWebpackCommonConfig(program){
     	                        loader:'postcss-loader',
     	                        options:{
     	                       	 plugins:function(){
+
     	                       	 	 return [
     	                                   require('precss'),
     	                                   require('autoprefixer')
@@ -112,23 +139,23 @@ export default function getWebpackCommonConfig(program){
 	                      options:{
 	                       	sourceMap:true,
 	                      	//sourcemaps are only available in conjunction with the extract-text-webpack-plugin
-                             modifyVars: JSON.stringify(theme)
+                          modifyVars: JSON.stringify(theme)
                              //using theme config in package.json to modify default less variables
 	                      }
 	                    }
              	]})
              },
-	         //https://github.com/postcss/postcss-loader
+	          //https://github.com/postcss/postcss-loader
              {
 		        test: /\.css$/,
 		        use: ExtractTextPlugin.extract({
                     fallback : 'style-loader',
-                    use:[
+                use:[
 		             {
-		            	 loader:'css-loader',
+		            	 loader:lf+'/css-loader',
 			           	 options:{
-			           	 	 modules:true,
-			           	 	 //enable css module,You can switch it off with :global(...) or :global for selectors and/or rules.
+			           	      	 modules:true,
+			           	 	      //enable css module,You can switch it off with :global(...) or :global for selectors and/or rules.
 	                         localIdentName: '[path][name]__[local]--[hash:base64:5]',
 	                         //path will be replaced by file path(foler path)
 	                         //name will be replaced by file name
@@ -201,11 +228,30 @@ export default function getWebpackCommonConfig(program){
          minChunks:2,
          filename:commonName
       }),
+    //CommonsChunkPlugin will boost rebuild performance
     // new webpack.optimize.MergeDuplicateChunksPlugin (),
     //merge them while duplicating
     // new webpack.optimize.RemoveEmptyChunksPlugin()
    //remove empty chunk
-  ]
+   //all of above plugins have been built-in
+   //https://github.com/Klathmon/imagemin-webpack-plugin
+   new ImageminPlugin({
+      test: /\.(jpe?g|png|gif|svg)$/i,
+      disable: isDev, // Disable during development
+      //https://pngquant.org/
+      pngquant: {
+        quality: '95-100'
+      },
+      optipng: null,
+      gifsicle :{
+        optimizationLevel:1
+      },
+      //http://www.lcdf.org/gifsicle/
+      jpegtran :{
+        progressive: false 
+      }
+
+   })]
 
   }
 

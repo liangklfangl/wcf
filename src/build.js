@@ -12,7 +12,7 @@ export default function build(program,callback){
  //get default webpack configuration
 
  if(program.outputPath){
- 	defaultWebpackConfig.output.path=program.outputPath;
+  	defaultWebpackConfig.output.path=program.outputPath;
  }
  //update output path
 if(program.publichPath){
@@ -20,13 +20,27 @@ if(program.publichPath){
 }
 //update public path
  if (program.compress) {
+  //https://github.com/mishoo/UglifyJS2
     defaultWebpackConfig.plugins = [...defaultWebpackConfig.plugins,
       new webpack.optimize.UglifyJsPlugin({
+         beautify:false,
+         sourceMap :true,
+         // use SourceMaps to map error message locations to modules. 
+         //This slows down the compilation. (default: true)
+         comments:false,
+        //Defaults to preserving comments containing /*!, /**!, @preserve or @license.
       	 output: {
             ascii_only: true,
 	      },
 	      compress: {
 	        warnings: false,
+          //no warnings when remove unused code,
+          drop_console :true,
+          //drop console
+          collapse_vars: true,
+          //Collapse single-use var and const definitions when possible.
+          reduce_vars: true,
+          // Improve optimization on variables assigned with and used as constant values.
 	      },
       }),
       new webpack.DefinePlugin({
@@ -72,13 +86,11 @@ if (typeof program.config === 'function') {
     });
   }
 
- console.log("defaultdefaultWebpackConfig------->",defaultWebpackConfig);
-
   const compiler = webpack(defaultWebpackConfig);
   // Hack: remove extract-text-webpack-plugin log
   if (!program.verbose) {
     compiler.plugin('done', (stats) => {
-        console.log('stats',stats);
+    //    console.log('stats',stats);
 
       // stats.stats.forEach((stat) => {
       //   //compilation.children是他所有依赖的模块信息
