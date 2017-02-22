@@ -47,28 +47,31 @@ export default function getWebpackCommonConfig(program){
   const commonName = program.hash ? 'common-[chunkhash].js' : 'common.js';
   const isDev = isDevMode(program);
   //override default vars of less files
-  let theme = {};
-  if (packageConfig.theme && typeof(packageConfig.theme) === 'string') {
-    let cfgPath = packageConfig.theme;
-    // relative path
-    if (cfgPath.charAt(0) === '.') {
-      cfgPath = path.resolve(program.cwd, cfgPath);
-    }
-    const getThemeConfig = require(cfgPath);
-    theme = getThemeConfig();
-    // if it's configured as a function ,the we invoke it 
-  } else if (packageConfig.theme && typeof(packageConfig.theme) === 'object') {
-    theme = packageConfig.theme;
-  }
- const lf=isWin() ? _path2.default.join(__dirname, '../node_modules').split(_path2.default.sep).join("/") :_path2.default.join(__dirname, '../node_modules');
+  // let theme = {};
+  // if (packageConfig.theme && typeof(packageConfig.theme) === 'string') {
+  //   let cfgPath = packageConfig.theme;
+  //   // relative path
+  //   if (cfgPath.charAt(0) === '.') {
+  //     cfgPath = path.resolve(program.cwd, cfgPath);
+  //   }
+  //   const getThemeConfig = require(cfgPath);
+  //   theme = getThemeConfig();
+  //   // if it's configured as a function ,the we invoke it 
+  // } else if (packageConfig.theme && typeof(packageConfig.theme) === 'object') {
+  //   theme = packageConfig.theme;
+  // }
+ const lf=isWin() ? path.join(__dirname, '../node_modules').split(path.sep).join("/") :path.join(__dirname, '../node_modules');
 
   return {
+    cache:true, 
+     //Cache the generated webpack modules and chunks to improve build speed. 
+     //Caching is enabled by default while in watch mode
    	output: {
       path: isWin() ? path.join(program.cwd, './dest/').split(path.sep).join("/") : path.join(program.cwd, './dest/') ,
       filename: jsFileName,
     },
     resolve:{
-     //  modules :["node_modules",path.join(__dirname, '../node_modules')],
+      // modules :["node_modules",path.join(__dirname, '../node_modules')],
       // moduleDirectories : ["node_modules"],
       // extensions: ['', '.web.jsx', '.web.js',  '.js', '.jsx', '.json'],
       // last two configuration is for webpack1
@@ -87,6 +90,8 @@ export default function getWebpackCommonConfig(program){
               test: /\.(png|jpg|jpeg|gif)(\?v=\d+\.\d+\.\d+)?$/i,
               use: {
               	 loader:'url-loader',
+                 //If the file is greater than the limit (in bytes) the file-loader is used and all query parameters are passed to it.
+                 //smaller than 10kb will use dataURL
               	 options:{
               	 	limit : 10000
               	 }
@@ -113,43 +118,54 @@ export default function getWebpackCommonConfig(program){
 	        }, {
              	test:/\.less$/,
              	use:ExtractTextPlugin.extract({
-                    fallback : 'style-loader',
-                     use :[
-                           {
-        			              loader: lf+'/css-loader',
-        			              options: { 
-        			              	 sourceMap: true,
-        			              	 importLoaders: 1 
-        			              }
-        			            },
-    	                    {
-    	                        loader:'postcss-loader',
-    	                        options:{
-    	                       	 plugins:function(){
-
-    	                       	 	 return [
-    	                                   require('precss'),
-    	                                   require('autoprefixer')
-    	                       	 	  ]
-    	                       	 }
-    	                       }
-    	                    },
-	                     {
-	                      loader:'less-loader',
-	                      options:{
-	                       	sourceMap:true,
-	                      	//sourcemaps are only available in conjunction with the extract-text-webpack-plugin
-                          modifyVars: JSON.stringify(theme)
-                             //using theme config in package.json to modify default less variables
-	                      }
-	                    }
+              fallback : lf+'/style-loader',
+               use :[{
+  			              loader: lf+'/css-loader',
+  			              options: { 
+                           modules:true,
+                          //enable css module,You can switch it off with :global(...) or :global for selectors and/or rules.
+                           localIdentName: '[path][name]__[local]--[hash:base64:5]',
+                           //path will be replaced by file path(foler path relative to project root)
+                           //name will be replaced by file name
+                           //local will be replaced by local class name
+                          sourceMap:true,
+                          //the extract-text-webpack-plugin can handle them.
+                          importLoaders: 1,
+                          // That many loaders after the css-loader are used to import resources.
+                          minimize: true,
+                          //You can also disable or enforce minification with the minimize query parameter.
+                          camelCase: true
+  			              }
+  			            },{
+                       //autoprefix your css
+                        loader:lf+'/postcss-loader',
+                        options:{
+                       	 plugins:function(){
+                       	 	 return [
+                                 require('precss'),
+                                 require('autoprefixer')
+                       	 	  ]
+                       	 }
+                       }
+                    },{
+                  loader:lf+'/less-loader',
+                  options:{
+                   	sourceMap:true,
+                    lessPlugins:[
+                      
+                    ]
+                  	//sourcemaps are only available in conjunction with the extract-text-webpack-plugin
+                    // modifyVars: JSON.stringify(theme)
+                   //using theme config in package.json to modify default less variables
+                  }
+                }
              	]})
              },
 	          //https://github.com/postcss/postcss-loader
              {
 		        test: /\.css$/,
 		        use: ExtractTextPlugin.extract({
-                    fallback : 'style-loader',
+                    fallback : lf+'/style-loader',
                 use:[
 		             {
 		            	 loader:lf+'/css-loader',
@@ -211,7 +227,7 @@ export default function getWebpackCommonConfig(program){
   plugins: [
    //from https://github.com/webpack-contrib/extract-text-webpack-plugin
     new ExtractTextPlugin({
-    	filename:'extracted-text-plugin-generated-[contenthash].css',
+    	filename:'extracted-text-plugin-[contenthash].css',
     	allChunks:false,
     	disable:false,
     	ignoreOrder:false

@@ -1,1 +1,0 @@
-{"version":3,"file":"index1.js","sources":["webpack:///./index1.js"],"sourcesContent":["'use strict';\n\nrequire('./index1.less');\n\nconsole.log('index1');\n\n\n//////////////////\n// WEBPACK FOOTER\n// ./index1.js\n// module id = 1\n// module chunks = 0"],"mappings":";;;;;;AAAA;AACA;AACA;AACA;AACA;;;","sourceRoot":""}
