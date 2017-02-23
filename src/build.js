@@ -3,6 +3,7 @@ import mergeCustomConfig from './mergeWebpackConfig';
 import {path,resolve} from 'path';
 import webpack from 'webpack';
 import StatsPlugin from 'stats-webpack-plugin';
+import DllPluginDync from 'dllplugindync';
 /** 
  * @param  {[type]} 
  * @param  {Function} 
@@ -11,7 +12,6 @@ import StatsPlugin from 'stats-webpack-plugin';
 export default function build(program,callback){
  let defaultWebpackConfig=webpackDefaultConfig(program);
  //get default webpack configuration
-
  if(program.outputPath){
   	defaultWebpackConfig.output.path=program.outputPath;
  }
@@ -23,6 +23,14 @@ if(program.publichPath){
 if(program.stj){
   defaultWebpackConfig.plugins.push(new StatsPlugin(program.stj,{
      //options passed to stats.json
+  }));
+}
+
+//we inject DllReferencePlugin
+if(program.manifest){
+  defaultWebpackConfig.plugins.push(new DllPluginDync({
+     manifest : program.manifest,
+     context : program.cwd
   }));
 }
  if (!program.dev) {
@@ -68,11 +76,10 @@ if (typeof program.config === 'function') {
 } else {
   defaultWebpackConfig = mergeCustomConfig(defaultWebpackConfig, resolve(program.cwd, program.config || 'webpack.config.js'));
 }
-
   const compiler = webpack(defaultWebpackConfig);
   //we watch file change
   if (program.watch) {
-    compiler.watch(program.watch || 200, doneHandler.bind(this ,program));
+    compiler.watch(program.watch || 200, doneHandler.bind(program));
   } else {
     compiler.run(doneHandler.bind(program));
   }
@@ -80,7 +87,6 @@ if (typeof program.config === 'function') {
 
 function doneHandler(err, stats) {
   //!! there an error attr in stats object, you can look through it to get the compile information
-
   console.log('resource rebuilt',stats);
 }
 

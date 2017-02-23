@@ -1,0 +1,19 @@
+{
+  "name": "vendor",
+  "content": {
+    "./vendors.js": {
+      "id": 0,
+      "meta": {
+        "harmonyModule": true
+      }
+    },
+    "../node_modules/jquery/dist/jquery.js": {
+      "id": 1,
+      "meta": {}
+    },
+    "../node_modules/mustache/mustache.js": {
+      "id": 2,
+      "meta": {}
+    }
+  }
+}

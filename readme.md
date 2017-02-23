@@ -1,3 +1,7 @@
+### 2.需要添加的功能
+重新开启一个子Compiler，该compiler集成了DLLPlugin生成我们的manifest文件
+
+
 ### 1.configuration
 
  --dev :
@@ -114,3 +118,7 @@ function isDevMode(program){
 ```
 
 
+
+###Plugins
+
+1. 为了使用DLLPlugin，我们需要在一个目录下传入webpack.dllPlugin.js和vendor.js，我们会自动寻找这两个文件并进行编译,否则会遍历每一个目录查找我们的文件，效率很低。第一步：--dll单独打包为manifest.json 第二步：--manifest manifest.json把manifest.json传入打包(此时不需要同时传入--dll --manifest)

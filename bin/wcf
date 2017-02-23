@@ -8,6 +8,9 @@ program
   .option('-w, --watch [delay]', 'watch file changes and rebuild')
   // program.watch : If you pass `-w` ,we receive `true` while `-w 100` is `100`
   .option('-h, --hash', 'build with hash')
+  .option('--dll <dllWebpackConfigFile>', 'build with ddlplugin')
+  //>node ./bin/wcf --dll ./dll/webpack.dll.js
+  .option('-m, --manifest <manifest.json>', 'manifest.json to DllReference Plugin')
   .option('--publicPath <publicPath>', 'publicPath for webpack')
   .option('--devtool <devtool>', 'sourcemap generate method, default is null')
   //--devtool cheap-source-map. you must choose one sourceMap type
@@ -16,6 +19,15 @@ program
   .option('--dev', 'whether is in development mode, default true')
   //wheter is in dev mode
   .parse(process.argv);
+
+if(program.dll && program.manifest){
+  throw new Error("dll means generate manifest.json while manifest is for DllReferencePlugin,can not exist same time!");
+}
+ //DllPlugin invoke
+ if(program.dll){
+   require("../lib/DllPlugin")(program);
+   return;
+ }
 
 if (program.watch) {
   require('../lib/build')(program);

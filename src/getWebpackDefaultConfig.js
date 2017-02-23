@@ -4,6 +4,7 @@ import getDefaultBabelConfig from './getBabelDefaultConfig';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import webpack from 'webpack';
 import ImageminPlugin from 'imagemin-webpack-plugin';
+
 /**
  * [isWin : whether running in windows platform]
  * @return {Boolean} [description]
@@ -11,7 +12,6 @@ import ImageminPlugin from 'imagemin-webpack-plugin';
 function isWin(){
   return process.platform.indexOf('win')===0;
 }
-
 /**
  * [deltPathCwd prepend filepath width cwd]
  * @return {[string]} [prepended filepath]
