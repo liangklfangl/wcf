@@ -89,7 +89,7 @@ export default function getWebpackCommonConfig(program){
 	    rules: [{
               test: /\.(png|jpg|jpeg|gif)(\?v=\d+\.\d+\.\d+)?$/i,
               use: {
-              	 loader:'url-loader',
+              	 loader:require.resolve('url-loader'),
                  //If the file is greater than the limit (in bytes) the file-loader is used and all query parameters are passed to it.
                  //smaller than 10kb will use dataURL
               	 options:{
@@ -98,11 +98,11 @@ export default function getWebpackCommonConfig(program){
               }
              },{ 
                  test: /\.json$/, 
-               	 loader:'json-loader'
+               	 loader:require.resolve('json-loader')
            }, { 
            	test: /\.html?$/, 
            	use:{
-           		loader: 'file-loader',
+           		loader: require.resolve('file-loader'),
            		options:{
            		}
            	}
@@ -118,9 +118,9 @@ export default function getWebpackCommonConfig(program){
 	        }, {
              	test:/\.less$/,
              	use:ExtractTextPlugin.extract({
-              fallback : lf+'/style-loader',
+              fallback : require.resolve('style-loader'),
                use :[{
-  			              loader: lf+'/css-loader',
+  			              loader: require.resolve('css-loader'),
   			              options: { 
                            modules:true,
                           //enable css module,You can switch it off with :global(...) or :global for selectors and/or rules.
@@ -138,7 +138,7 @@ export default function getWebpackCommonConfig(program){
   			              }
   			            },{
                        //autoprefix your css
-                        loader:lf+'/postcss-loader',
+                        loader:require.resolve('postcss-loader'),
                         options:{
                        	 plugins:function(){
                        	 	 return [
@@ -148,7 +148,7 @@ export default function getWebpackCommonConfig(program){
                        	 }
                        }
                     },{
-                  loader:lf+'/less-loader',
+                  loader:'/less-loader',
                   options:{
                    	sourceMap:true,
                     lessPlugins:[
@@ -165,10 +165,10 @@ export default function getWebpackCommonConfig(program){
              {
 		        test: /\.css$/,
 		        use: ExtractTextPlugin.extract({
-                    fallback : lf+'/style-loader',
+                    fallback : require.resolve('style-loader'),
                 use:[
 		             {
-		            	 loader:lf+'/css-loader',
+		            	 loader:require.resolve('css-loader'),
 			           	 options:{
 			           	      	 modules:true,
 			           	 	      //enable css module,You can switch it off with :global(...) or :global for selectors and/or rules.
@@ -234,16 +234,16 @@ export default function getWebpackCommonConfig(program){
     	//Disables order check (useful for CSS Modules!),
     }),
     //chunk less than this size will be merged
-    new webpack.optimize.MinChunkSizePlugin({
-    	minChunkSize:1000
-    }),
+    // new webpack.optimize.MinChunkSizePlugin({
+    // 	minChunkSize:1000
+    // }),
     // new webpack.optimize.OccurenceOrderPlugin(),
     //give most used chunk a smaller id
-    new webpack.optimize.CommonsChunkPlugin({
-         name:'common',
-         minChunks:2,
-         filename:commonName
-      }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //      name:'common',
+    //      minChunks:2,
+    //      filename:commonName
+    //   }),
     //CommonsChunkPlugin will boost rebuild performance
     // new webpack.optimize.MergeDuplicateChunksPlugin (),
     //merge them while duplicating
