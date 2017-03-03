@@ -4,10 +4,17 @@ import {path,resolve} from 'path';
 import webpack from 'webpack';
 import StatsPlugin from 'stats-webpack-plugin';
 import DllPluginDync from 'dllplugindync';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import bundleWDevServer from "./devServer";
+import webpackWatch from "./webpackWatch";
+import webpackMerge from "webpack-merge";
+import { existsSync } from 'fs';
+import util from "util";
 /** 
  * @param  {[type]} 
  * @param  {Function} 
  * @return {[type]}
+ * Default webpack configuration will be replaced by parameters from shell
  */
 export default function build(program,callback){
  let defaultWebpackConfig=webpackDefaultConfig(program);
@@ -23,6 +30,23 @@ if(program.publichPath){
 if(program.stj){
   defaultWebpackConfig.plugins.push(new StatsPlugin(program.stj,{
      //options passed to stats.json
+  }));
+}
+
+//inject HotModuleReplacementPlugin
+if(program.dev){
+  defaultWebpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
+}
+//we inject html by HtmlWebpackPlugin
+if(program.dev){
+  defaultWebpackConfig.plugins.push(new HtmlWebpackPlugin({
+    title :"HtmlPlugin",
+    // filename :"index.html",
+    template: "test/index.html",
+    //we must use html-loader here instead of file-loader
+    inject :"body",
+    cache : false,
+    xhtml :false
   }));
 }
 
@@ -70,23 +94,24 @@ if(program.manifest){
       ];
     }
   }
-
-if (typeof program.config === 'function') {
- defaultWebpackConfig = program.config(defaultWebpackConfig) || defaultWebpackConfig;
-} else {
-  defaultWebpackConfig = mergeCustomConfig(defaultWebpackConfig, resolve(program.cwd, program.config || 'webpack.config.js'));
-}
-  const compiler = webpack(defaultWebpackConfig);
-  //we watch file change
-  if (program.watch) {
-    compiler.watch(program.watch || 200, doneHandler.bind(program));
-  } else {
-    compiler.run(doneHandler.bind(program));
+  //User defined webpack.config.js to update our common webpack config
+  if(program.config){
+    //defaultWebpackConfig = mergeCustomConfig(defaultWebpackConfig, resolve(program.cwd, program.config || 'webpack.config.js'));
+    const customWebpackConfigPath = resolve(program.cwd,program.config || 'webpack.config.js');
+    if(existsSync(customWebpackConfigPath)){
+      const customConfig = require(customWebpackConfigPath);
+       defaultWebpackConfig=webpackMerge(defaultWebpackConfig, customConfig);
+    }
   }
+  // console.log('combined：',util.inspect(defaultWebpackConfig,{showHidden:true,depth:3}));
+  //Whether we should start DevServer which serve file from memory instead of fileSystem
+  if(program.devServer){
+    bundleWDevServer(defaultWebpackConfig);
+  }else{
+    //we use watch method of webpack
+    webpackWatch(defaultWebpackConfig,program);
+  }
+ 
 }
 
-function doneHandler(err, stats) {
-  //!! there an error attr in stats object, you can look through it to get the compile information
-  console.log('resource rebuilt',stats);
-}
 

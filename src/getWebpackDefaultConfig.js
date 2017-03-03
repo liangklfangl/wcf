@@ -4,7 +4,6 @@ import getDefaultBabelConfig from './getBabelDefaultConfig';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import webpack from 'webpack';
 import ImageminPlugin from 'imagemin-webpack-plugin';
-
 /**
  * [isWin : whether running in windows platform]
  * @return {Boolean} [description]
@@ -61,14 +60,14 @@ export default function getWebpackCommonConfig(program){
   //   theme = packageConfig.theme;
   // }
  const lf=isWin() ? path.join(__dirname, '../node_modules').split(path.sep).join("/") :path.join(__dirname, '../node_modules');
-
+ const outputPath = isWin() ? path.join(program.cwd, './dest/').split(path.sep).join("/") : path.join(program.cwd, './dest/') ;
   return {
-    cache:true, 
+    cache:false, 
      //Cache the generated webpack modules and chunks to improve build speed. 
      //Caching is enabled by default while in watch mode
    	output: {
-      path: isWin() ? path.join(program.cwd, './dest/').split(path.sep).join("/") : path.join(program.cwd, './dest/') ,
-      filename: jsFileName,
+      path: outputPath,
+      filename: jsFileName
     },
     resolve:{
       // modules :["node_modules",path.join(__dirname, '../node_modules')],
@@ -76,6 +75,11 @@ export default function getWebpackCommonConfig(program){
       // extensions: ['', '.web.jsx', '.web.js',  '.js', '.jsx', '.json'],
       // last two configuration is for webpack1
       // for detail :https://github.com/webpack/webpack/issues/472#issuecomment-55706013
+    },
+    devServer:{
+      publicPath:'/',
+      open :true,
+      contentBase:false
     },
     devtool: program.devtool || "cheap-source-map",
     entry: deltPathCwd(program,packageConfig.entry),
@@ -102,11 +106,16 @@ export default function getWebpackCommonConfig(program){
            }, { 
            	test: /\.html?$/, 
            	use:{
-           		loader: require.resolve('file-loader'),
+           		loader: require.resolve('html-loader'),
            		options:{
            		}
            	}
-          },{
+          },
+          {
+            test: /\.scss$/,
+            loaders: ["style-loader", "css-loader", "sass-loader"]
+        },
+          {
 	          test: /\.js(x)*/,
 	          exclude: function(path){
                var isNpmModule=!!path.match(/node_modules/);
@@ -227,7 +236,7 @@ export default function getWebpackCommonConfig(program){
   plugins: [
    //from https://github.com/webpack-contrib/extract-text-webpack-plugin
     new ExtractTextPlugin({
-    	filename:'extracted-text-plugin-[contenthash].css',
+    	filename:'etp-[contenthash].css',
     	allChunks:false,
     	disable:false,
     	ignoreOrder:false
@@ -266,7 +275,6 @@ export default function getWebpackCommonConfig(program){
       jpegtran :{
         progressive: false 
       }
-
    })]
 
   }
