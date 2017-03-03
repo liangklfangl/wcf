@@ -32,7 +32,6 @@ if(program.stj){
      //options passed to stats.json
   }));
 }
-
 //inject HotModuleReplacementPlugin
 if(program.dev){
   defaultWebpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());

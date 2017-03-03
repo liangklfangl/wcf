@@ -1,9 +1,9 @@
 const path = require('path');
 module.exports = {
-	cache:false,
+	cache:true,
 	output: {
-	  path: path.resolve(process.cwd(),'./dist7'),
-	  filename: 'dist3.js'
+	  path: path.resolve(process.cwd(),'./dist'),
+	  filename: 'dist1.js'
 	},
 	module:{
 		rules:[

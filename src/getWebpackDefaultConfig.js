@@ -243,16 +243,16 @@ export default function getWebpackCommonConfig(program){
     	//Disables order check (useful for CSS Modules!),
     }),
     //chunk less than this size will be merged
-    // new webpack.optimize.MinChunkSizePlugin({
-    // 	minChunkSize:1000
-    // }),
+    new webpack.optimize.MinChunkSizePlugin({
+    	minChunkSize:1000
+    }),
     // new webpack.optimize.OccurenceOrderPlugin(),
     //give most used chunk a smaller id
-    // new webpack.optimize.CommonsChunkPlugin({
-    //      name:'common',
-    //      minChunks:2,
-    //      filename:commonName
-    //   }),
+    new webpack.optimize.CommonsChunkPlugin({
+         name:'common',
+         minChunks:2,
+         filename:commonName
+      }),
     //CommonsChunkPlugin will boost rebuild performance
     // new webpack.optimize.MergeDuplicateChunksPlugin (),
     //merge them while duplicating

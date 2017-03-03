@@ -15,13 +15,13 @@ export default function webpackWatch(defaultWebpackConfig,program){
   //we watch file change, so if entry file configured in package.json changed, it will
   //compile automatically. And also we watch file of custom webpack.config.js for changes!
   if (program.watch) {
-    watching = compiler.watch(200, doneHandler.bind(program));
+    const delay = typeof program.watch ==="number" ? program.watch : 200;
+    watching = compiler.watch(delay, doneHandler.bind(program));
     if(customWebpackPath && existsSync(customWebpackPath)){
        chokidar.watch(customWebpackPath).on('change',function(){
-         watching._done();
-         watching = null;
-          // webpackWatch(defaultWebpackConfig,program);
-         watching = compiler.watch(program.watch || 200, doneHandler.bind(program));
+          console.log('You must restart to compile because configuration file changed!');
+          process.exit(0);
+          //We must exit because configuration file changed!
        });
     }
   } else {

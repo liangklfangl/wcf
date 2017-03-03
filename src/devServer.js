@@ -133,8 +133,8 @@ function reportReadiness(uri, options) {
   //historyApiFallback回退到index.html
   if(options.open) {
     //打开一个页面
-    // opn(uri).catch(function() {
-    //   console.log("Unable to open browser. If you are running in a headless environment, please do not use the open flag.");
-    // });
+    opn(uri).catch(function() {
+      console.log("Unable to open browser. If you are running in a headless environment, please do not use the open flag.");
+    });
   }
 }

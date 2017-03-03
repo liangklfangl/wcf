@@ -1,6 +1,10 @@
-### 1.该工具的两种模式
+### 1.该工具的三种打包模式
 
-首先必须说明一下，该工具是基于webpack2的，所以很多配置都是需要遵守webpack2规范的。
+首先必须说明一下，该工具是基于webpack2的，所以很多配置都是需要遵守webpack2规范的。如果需要安装，直接运行下面的命令就可以了。
+
+```js
+npm install -g webpackcc//同时必须注意，我们局部安装的优先级要高于全局安装的
+```
 
 #### 1.1 webpack-dev-server模式
 
@@ -19,155 +23,95 @@
 wcf --watch --dev
 ```
 
-该模式除了会监听entry文件的变化，当我们自定义的webpack.config.js(通过--config传入)文件内容变化的时候也会自动重新进行编译！
+该模式除了会监听entry文件的变化。当我们自定义的webpack.config.js(通过--config传入)文件内容变化的时候会自动退出编译，要求用户重启!
 
-#### 1.2 webpack普通模式
+#### 1.3 webpack普通模式
 
-此时不会监听文件的变化，只是完成webpack的一次编译。
+此时不会监听文件的变化，只是完成webpack的一次编译然后退出！
 
 ```js
-wcf
+wcf --dev
 ```
-
 
 ### 2.该工具的配置参数
 
+注意，该工具的所有的配置都是基于webpack的，各个参数的意义和webpack是一致的。
 
+#### 2.1 shell参数
 
+--version
 
+表示我们的版本号
 
+-w/--watch
 
-### 2.需要添加的功能
-重新开启一个子Compiler，该compiler集成了DLLPlugin生成我们的manifest文件
+表示是否启动webpack的watch模式，参数值可以是一个数字，默认是200ms。
 
-通过一个开关决定是打开watch模式还是dev-server模式,如果开启了dev-server这种模式必须使用html-webpack-plugin产生html，因为他会把产生的chunk按照name封装到html中，否则我们的defaultWebpack中的output.name是通过[name].[hash]这种方式的，所以也是不知道具体的文件名从而引用的
+-h/--hash
 
-### 1.基本配置
+表示文件名是否应该包含hash值，注意这里如果传入这个参数那么文件名都会包含chunkhash而不是hash。
 
+--dll <dllWebpackConfigFile>
 
- --dev :
+此时你需要输入一个webpack.dll.js,通过这个文件我们产生一个json文件用于DllReferencePlugin
 
- Whether is in development mode. The default value is false , meaning that we are in production mode! So , do not forget to input "--dev" to switch to development mode for performance enhancement (removing some plugins in this mode).
+-m/--manifest <manifest.json>
 
- ```js
-function isDevMode(program){
-   return !!program.dev;
-}
- ```
+此时你需要传入一个json文件给DllReferencePlugin，此时我们会在自动添加DllReferencePlugin
 
+--publicPath <publicPath>
 
-```js
-  if (!program.verbose) {
-    compiler.plugin('done', (stats1) => {
-      stats1.stats.forEach((stat) => {
-        stat.compilation.children = stat.compilation.children.filter((child) => {
-          return child.name !== 'extract-text-webpack-plugin';
-        });
-      });
-    });
+表示我们webpack的publicPath参数
+
+--devtool <devtool>
+
+用于指定sourceMap格式，默认是"cheap-source-map"
+
+--stj <filename>
+
+是否在output.path路径下产生stats.json文件，该文件作用可以[参见这里](https://github.com/liangklfangl/commonchunkplugin-source-code)
+
+--dev
+
+是否是开发模式，如果是我们会添加很多开发模式下才会用到的Plugin
+
+--devServer
+
+因为该工具集成了webpack-dev-server的打包模式，可以使用这个参数开启。
+
+--config <customConfigFile>
+
+让使用者自己指定配置文件，配置文件内容会通过[webpack-merge](https://github.com/survivejs/webpack-merge)进行合并。
+
+#### 2.2 webpack默认参数
+
+<cod>entry:</cod>
+
+我们通过在package.json中配置entry字段来表示入口文件，比如：
+
+```json
+ "entry": {
+    "index": "./test/index.js"
   }
 ```
 
-#### 1.10 用户自定义配置文件
-
-如果用户觉得需要自己定义配置文件，那么可以定义一个自定义的配置文件路径并传入，但是该配置文件必须export一个函数，该函数接受默认的webpack配置作为参数，用户可以通过此函数对webpack的默认配置进行更新(该文件默认路径是process.cwd)。
-
-```js
-export default function mergeCustomConfig(webpackConfig, customConfigPath) {
-  if (!existsSync(customConfigPath)) {
-    return webpackConfig;
-  }
-  const customConfig = require(customConfigPath);
-  if (typeof customConfig === 'function') {
-    return customConfig(webpackConfig, ...[...arguments].slice(2));
-  }
-  throw new Error(`Return of ${customConfigPath} must be a function.`);
-}
-```
+这样就表示我们会将test目录下的index.js作为入口文件来打包，你也可以配置多个入口文件，其都会打包到output.path对应的目录下。当然，你也可以通过上面shell配置的config文件来更新或者覆盖入口文件。覆盖模式采用的就是上面说的webpack-merge。
 
 
+<code>output.path:</code>
+
+我们默认的打包输出路径是process.cwd()/dest，你可以通过我们的--config参数来覆盖。
 
 
+<code>loaders:</code>
 
-### 1.wcf(webpack configuration )
-
- it is based webpack
-
-### using theme in package.json to override less variables
-
-### in windows platform, we input ./bin/wcf directly in command line tools
-
-
-
-### tips
-
-#### loaders features
-
-1. `resolve.modules` has no effect, so we prefix our path manually
-
-```js
- const lf=isWin() ? path.join(__dirname, '../node_modules').split(path.sep).join("/") :path.join(__dirname, '../node_modules');
-
-```
-
-
-### what you can do ?
-
-1. use import or require to load your css files with help of less-loader
-
-```js
- import css from './index.less';
- //or 
- const css = require('./index.less');
-```
-
-2.postprocess your css
-
-```js
-{
- //autoprefix your css
-  loader:'postcss-loader',
-  options:{
-   plugins:function(){
-     return [
-           require('precss'),
-           require('autoprefixer')
-      ]
-   }
- }
-}
-```
-
-3. support css modules 
-
-```js
-{
-  loader: 'css-loader',
-  options: { 
-      modules:true,
-      //enable css module,You can switch it off with :global(...) or :global for selectors and/or rules.
-       localIdentName: '[path][name]__[local]--[hash:base64:5]',
-       //path will be replaced by file path(foler path). (relative to root foler)
-       //name will be replaced by file name
-       //local will be replaced by local class name
-      sourceMap:true,
-      //the extract-text-webpack-plugin can handle them.
-      importLoaders: 1,
-      // That many loaders after the css-loader are used to import resources.
-      minimize: true,
-      //You can also disable or enforce minification with the minimize query parameter.
-      camelCase: true
-  }
-}
-```
-
-4.image loader
+使用url-loader来加载png|jpg|jpeg|gif图片，小于10kb的文件将使用DataUrl方式内联：
 
 ```js
 {
   test: /\.(png|jpg|jpeg|gif)(\?v=\d+\.\d+\.\d+)?$/i,
   use: {
-     loader:'url-loader',
+     loader:require.resolve('url-loader'),
      //If the file is greater than the limit (in bytes) the file-loader is used and all query parameters are passed to it.
      //smaller than 10kb will use dataURL
      options:{
@@ -177,52 +121,93 @@ export default function mergeCustomConfig(webpackConfig, customConfigPath) {
  }
 ```
 
-
-
-###Plugins
-
-为了保证开发环境的效率，在使用wcf的时候建议传入--dev表明在开发环境中，这时候wcf会安装一些仅仅在开发环境使用的包。
-
-开发环境的包：
+json文件采用json-loader加载:
 
 ```js
-NpmInstallPlugin
-ExtractTextPlugin
-CommonsChunkPlugin
-MinChunkSizePlugin
+{ 
+   test: /\.json$/, 
+   loader:require.resolve('json-loader')
+}
+```
+
+html文件采用html-loader来加载：
+
+```js
+{ 
+    test: /\.html?$/, 
+    use:{
+      loader: require.resolve('html-loader'),
+      options:{
+      }
+    }
+  }
+```
+
+sass文件采用如下三个loader顺次加载：
+
+```js
+{
+    test: /\.scss$/,
+    loaders: ["style-loader", "css-loader", "sass-loader"]
+}
+```
+
+当然，你可以通过[getWebpackDefaultConfig.js](https://github.com/liangklfangl/wcf/blob/master/src/getWebpackDefaultConfig.js)来查看更多的loader信息。其中内置了很多的功能，包括css module,压缩css,集成autoPrefixer,precss，直接import我们的css文件等等。
+
+注意：上面任何内置的参数都是可以通过config(shell配置)文件来替换的！
+
+
+### 3.内置plugins
+
+为了保证开发环境的效率，在使用wcf的时候建议传入--dev表明是在开发环境中，这时候wcf会安装一些仅仅在开发环境使用的包。
+
+开发环境独有的plugin：
+
+```js
 HotModuleReplacementPlugin
 HtmlWebpackPlugin
 //在output目录下产生一个index.html，但是该文件是在内存中的
 ```
 
-生产环境的包：
+生产环境独有的plugin：
 
 ```js
 UglifyJsPlugin
-DefinePlugin
 ImageminPlugin
 ```
 
+共有的包：
+
+```js
+CommonsChunkPlugin
+ExtractTextPlugin
+StatsPlugin//shell参数传入--stj
+DllPluginDync//shell传入manifest
+```
 
 
+### 4.集成HMR热加载
 
+在webpack-dev-server模式下，我们是可以开启HMR的。此时你只需要在你shell命令中传入devServer就可以了，当然前提是你的模块本身是支持HMR的。关于HMR的相关内容你可以参考[这篇文章](https://github.com/liangklfangl/webpack-hmr)。注意，我们的devServer是如下的配置:
 
-1. 为了使用DLLPlugin，我们需要在一个目录下传入webpack.dllPlugin.js和vendor.js，我们会自动寻找这两个文件并进行编译,否则会遍历每一个目录查找我们的文件，效率很低。第一步：--dll单独打包为manifest.json 第二步：--manifest manifest.json把manifest.json传入打包(此时不需要同时传入--dll --manifest)
+```js
+ devServer:{
+      publicPath:'/',
+      open :true,
+      contentBase:false
+    }
+```
 
-### 遇到的问题
+此时你运行wcf --devServer就会发现会自动打开页面，如果你不需要该功能可以通过自定义配置文件来覆盖它！
 
-#### 我们文件名采用的是chunhash,必须js变化才能导致通过extract-text-plugin抽取的css变化，而直接修改css文件无法导致HMR？
+当然，在我们wcf中，你只要运行"wcf --devServer"此时打开html页面，你修改test目录下的任何文件就可以看到效果是及时显示的，这就是一个HMR的例子。原因在于我们在package.json中采用的就是配置test/index.js作为入口文件：
 
-<code>chunkhash</code>问题：
+```js
+ "entry": {
+    "index": "./test/index.js"
+  }
+```
 
-当css和js共存了，编译的时候以js作为入口文件，那么js变化了那么chunkhash会变化，同时css变化了chunkhash也会变化，因为js和css会被打包到一个文件中。这样，只要有一个文件变化了，那么另外一个文件都会失效！
+### 5.说明
 
-<code>contenthash</code>问题：
-
-是extract-text-webpack-plugin来提供，将css和js单独打上独立的指纹，那么css变化不会影响js失效，同时js变化也不会css失效。
-
-<code>HMR</code>问题：
-
-HMR必须要模块支持，只有一个模块含有HMR代码才行。在大多数情况下，不需要在每一个模块中都写入HMR代码，如果一个模块没有HMR处理函数，那么就会向上冒泡，也就是说我们只需要一个HMR函数就可以处理整个模块树的更新操作。如果模块树中一个模块更新了，那么整个模块树都会重新加载。
-
-####基于webpack2
+(1)我们的ExtractTextPlugin采用的是contentHash,而不是chunkHash,原因可以阅读[Webpack中hash与chunkhash的区别，以及js与css的hash指纹解耦方案](http://www.cnblogs.com/ihardcoder/p/5623411.html)
