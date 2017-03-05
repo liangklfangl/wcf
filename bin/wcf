@@ -42,7 +42,6 @@ program
   //set a custom config file while it must export an function receiving our defaultWebpackConfig as parameter
   .parse(process.argv);
 
-console.log('+++++++++++++',program);
 if(program.dll && program.manifest){
   throw new Error("dll means generate manifest.json while manifest is for DllReferencePlugin,can not exist same time!");
 }

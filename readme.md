@@ -1,18 +1,28 @@
-### 1.该工具的三种打包模式
+### 说明
 
-首先必须说明一下，该工具是基于webpack2的，所以很多配置都是需要遵守webpack2规范的。如果需要安装，直接运行下面的命令就可以了。
+首先必须说明一下，该工具是基于webpack2的，所以很多配置都是需要遵守webpack2规范的。如果需要安装，直接运行下面的命令就可以了。而且，我们的入口文件都是在package.json中进行配置，当执行wcf命令会自动调用下面的三种模式中的一种完成打包。
 
 ```js
 npm install -g webpackcc//同时必须注意，我们局部安装的优先级要高于全局安装的
 ```
 
+入口文件的配置：
+
+```js
+ "entry": {
+    "index": "./test/index.js"
+  }
+```
+
+### 1.该工具的三种打包模式
+
 #### 1.1 webpack-dev-server模式
 
-这种模式你只要在wcf后添加devServer参数，表明我们的文件应该使用compiler.outputFileSystem=MemoryFileSystem来完成。此时不会在output.path下产生我们的文件，而是直接从内存中获取，结合URL映射的方式。同时该模式会自动在output.path路径下通过html-webpack-plugin产生一个html(内存中不可见,同时需要加上--dev表明是开发模式),并自动加载我们的所有chunk.
+这种模式你只要在wcf后添加devServer参数，表明我们的文件应该使用webpack-dev-server来完成打包，此时所有的生成文件都会在内存中，而不会写入磁盘，效率比下面两种模式高，也是最推荐的一种打包模式。同时该模式会自动在output.path路径下通过html-webpack-plugin产生一个html(内存中不可见,同时需要加上--dev表明是开发模式),并自动加载我们的所有chunk.
 
 ```js
  wcf --devServer --dev
- //此时打开localhost:8080就会看到我们使用test/index.html作为template的页面
+ //此时打开localhost:8080就会看到我们使用test/index.html作为template的页面，如果你需要修改template请使用下面的htmlTemplate参数
 ```
 
 #### 1.2 webpack本身的watch模式
@@ -23,7 +33,7 @@ npm install -g webpackcc//同时必须注意，我们局部安装的优先级要
 wcf --watch --dev
 ```
 
-该模式除了会监听entry文件的变化。当我们自定义的webpack.config.js(通过--config传入)文件内容变化的时候会自动退出编译，要求用户重启!
+该模式除了会监听entry文件的变化,而且当我们自定义的webpack.config.js(通过--config传入)文件内容变化的时候会自动退出编译，要求用户重启编译过程!
 
 #### 1.3 webpack普通模式
 
@@ -57,7 +67,7 @@ wcf --dev
 
 -m/--manifest <manifest.json>
 
-此时你需要传入一个json文件给DllReferencePlugin，此时我们会在自动添加DllReferencePlugin
+此时你需要传入一个json文件给DllReferencePlugin，此时我们会在自动添加DllReferencePlugin。需要了解上面两个选项可以阅读[webpackDll](https://github.com/liangklfangl/webpackDll)
 
 --publicPath <publicPath>
 
@@ -69,7 +79,7 @@ wcf --dev
 
 --stj <filename>
 
-是否在output.path路径下产生stats.json文件，该文件作用可以[参见这里](https://github.com/liangklfangl/commonchunkplugin-source-code)
+是否在output.path路径下产生stats.json文件，该文件可以[参见这里](https://github.com/liangklfangl/commonchunkplugin-source-code)用于分析本次打包过程
 
 --dev
 
@@ -77,7 +87,7 @@ wcf --dev
 
 --devServer
 
-因为该工具集成了webpack-dev-server的打包模式，可以使用这个参数开启。
+因为该工具集成了webpack-dev-server的打包模式，可以使用这个参数开启上面所说的webpack-dev-server模式。
 
 --config <customConfigFile>
 
@@ -186,27 +196,21 @@ DllPluginDync//shell传入manifest
 ```
 
 
-### 4.集成HMR热加载
+### 4.HMR功能的说明
 
-在webpack-dev-server模式下，我们是可以开启HMR的。此时你只需要在你shell命令中传入devServer就可以了，当然前提是你的模块本身是支持HMR的。关于HMR的相关内容你可以参考[这篇文章](https://github.com/liangklfangl/webpack-hmr)。注意，我们的devServer是如下的配置:
+在webpack-dev-server模式下，我们暂时没有提供HMR的功能。如果你需要体验该功能，你只需要克隆该npm对应的git仓库，然后直接运行`node ./bin/wcf --dev --devServer`就可以了。关于HMR的相关内容你可以参考[这篇文章](https://github.com/liangklfangl/webpack-hmr)。注意，我们的devServer是如下的配置:
 
 ```js
- devServer:{
+  devServer:{
       publicPath:'/',
       open :true,
-      contentBase:false
+      port:8080,
+      contentBase:false,
     }
 ```
 
 此时你运行wcf --devServer就会发现会自动打开页面，如果你不需要该功能可以通过自定义配置文件来覆盖它！
 
-当然，在我们wcf中，你只要运行"wcf --devServer"此时打开html页面，你修改test目录下的任何文件就可以看到效果是及时显示的，这就是一个HMR的例子。原因在于我们在package.json中采用的就是配置test/index.js作为入口文件：
-
-```js
- "entry": {
-    "index": "./test/index.js"
-  }
-```
 
 ### 5.说明
 

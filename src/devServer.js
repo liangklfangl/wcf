@@ -32,9 +32,9 @@ export default function bundleWDevServer(defaultWebpackConfig){
   if(!devServerOpt.host){
     devServerOpt.host="localhost";
   }
-  //HMR
-  if(!devServerOpt.hot){
-    devServerOpt.hot=true;
+  //HMR, we force to disable hmr
+  if(!devServerOpt.hot || devServerOpt.hot){
+    devServerOpt.hot=false;
   }
   //set ContentBase
   if(devServerOpt.contentBase === undefined) {
