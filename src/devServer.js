@@ -34,7 +34,7 @@ export default function bundleWDevServer(defaultWebpackConfig){
   }
   //HMR, we force to disable hmr
   if(!devServerOpt.hot || devServerOpt.hot){
-    devServerOpt.hot=false;
+    devServerOpt.hot=true;
   }
   //set ContentBase
   if(devServerOpt.contentBase === undefined) {
