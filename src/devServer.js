@@ -6,7 +6,7 @@ import addDevServerEntrypoints from "webpack-dev-server/lib/util/addDevServerEnt
 import createDomain from "webpack-dev-server/lib/util/createDomain";
 import chokidar  from "chokidar";
 let devServerOpt={};
-const DEFAULT_PORT = "8080";
+const DEFAULT_PORT = 8080;
 
 function colorInfo(useColor, msg) {
   if(useColor)
@@ -63,8 +63,8 @@ export default function bundleWDevServer(defaultWebpackConfig){
     return;
   }
  
-  //otherwise we choose a valide port
-  portfinder.basePort = DEFAULT_PORT;
+  //otherwise we choose a valid port
+  portfinder.basePort = 0;
   portfinder.getPort(function(err, port) {
     if(err) throw err;
     devServerOpt.port = port;
@@ -83,6 +83,7 @@ function startDevServer(wpOpt, options) {
   //Add "webpack/hot/only-dev-server","webpack/hot/dev-server" and ${require.resolve("../../client/")}?${domain}
   //to entry files
   let compiler;
+
   try {
     compiler = webpack(wpOpt);
     //begin to webpack compile

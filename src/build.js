@@ -1,6 +1,6 @@
 import webpackDefaultConfig from './getWebpackDefaultConfig';
 import mergeCustomConfig from './mergeWebpackConfig';
-import {path,resolve} from 'path';
+import path from 'path';
 import webpack from 'webpack';
 import StatsPlugin from 'stats-webpack-plugin';
 import DllPluginDync from 'dllplugindync';
@@ -17,6 +17,14 @@ import util from "util";
  * Default webpack configuration will be replaced by parameters from shell
  */
 export default function build(program,callback){
+ const defaultHtml = "../test/index.html";
+ let useDefinedHtml ="";
+
+ //With no html template configured, we use our own
+ if(program.htmlTemplate){
+    useDefinedHtml = existsSync(path.resolve(process.cwd(),program.htmlTemplate)) ? path.resolve(process.cwd(),program.htmlTemplate) : defaultHtml;
+ }
+
  let defaultWebpackConfig=webpackDefaultConfig(program);
  //get default webpack configuration
  if(program.outputPath){
@@ -36,12 +44,14 @@ if(program.stj){
 if(program.dev){
   defaultWebpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 }
+console.log('目标地址：',path.join(__dirname,"../test/index.html"));
 //we inject html by HtmlWebpackPlugin
 if(program.dev){
   defaultWebpackConfig.plugins.push(new HtmlWebpackPlugin({
     title :"HtmlPlugin",
     // filename :"index.html",
-    template: "test/index.html",
+    template:path.join(__dirname,"../test/index.html"),
+    // template:(useDefinedHtml ? useDefinedHtml : defaultHtml),
     //we must use html-loader here instead of file-loader
     inject :"body",
     cache : false,

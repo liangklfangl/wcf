@@ -61,6 +61,9 @@ export default function getWebpackCommonConfig(program){
   // }
  const lf=isWin() ? path.join(__dirname, '../node_modules').split(path.sep).join("/") :path.join(__dirname, '../node_modules');
  const outputPath = isWin() ? path.join(program.cwd, './dest/').split(path.sep).join("/") : path.join(program.cwd, './dest/') ;
+  
+  console.log('加载css页面为:', deltPathCwd(program, packageConfig.entry));
+
   return {
     cache:false, 
      //Cache the generated webpack modules and chunks to improve build speed. 
@@ -79,6 +82,7 @@ export default function getWebpackCommonConfig(program){
     devServer:{
       publicPath:'/',
       open :true,
+      port:8080,
       contentBase:false
     },
     devtool: program.devtool || "cheap-source-map",
@@ -157,7 +161,7 @@ export default function getWebpackCommonConfig(program){
                        	 }
                        }
                     },{
-                  loader:'/less-loader',
+                  loader:require.resolve('less-loader'),
                   options:{
                    	sourceMap:true,
                     lessPlugins:[

@@ -2,6 +2,7 @@ import * as dom from './dom';
 import * as time from './time';
 import pulse from './pulse';
 require('./styles.scss');
+console.log('insert');
 const UPDATE_INTERVAL = 1000; // milliseconds
 const intervalId = window.setInterval(() => {
     dom.writeTextToElement('upTime', time.getElapsedSeconds() + ' seconds');

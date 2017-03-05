@@ -1,8 +1,26 @@
 #!/usr/bin/env node
-
+/*
+  rawArgs:
+   [ 'C:\\Program Files\\nodejs\\node.exe',
+     'C:\\Users\\Administrator\\AppData\\Roaming\\npm\\node_modules\\webpackcc\\
+bin\\wcf',
+     '--dev',
+     '--devServer' ],
+  dev: true,
+  devServer: true,
+  args: [] }
+  //上面是执行wcf命令
+  rawArgs:
+   [ 'C:\\Program Files\\nodejs\\node.exe',
+     'C:\\Users\\Administrator\\Desktop\\wcf\\bin\\wcf',
+     '--dev',
+     '--devServer' ],
+  dev: true,
+  devServer: true,
+  //上面是执行node命令
+ */
 const program = require('commander');
 program.cwd=process.cwd();
-
 program
   .version(require('../package.json').version, '-v, --version')
   .option('-w, --watch [delay]', 'watch file changes and rebuild')
@@ -19,10 +37,12 @@ program
   .option('--dev', 'whether is in development mode, default true')
   //wheter is in dev mode
   .option('--devServer','whether serve file with webpack-dev-server')
+  .option('--htmlTemplate <htmlTemplate>', 'set custom htmlTemplate file')
   .option('--config <customConfigFile>', 'set custom webpack config')
   //set a custom config file while it must export an function receiving our defaultWebpackConfig as parameter
   .parse(process.argv);
 
+console.log('+++++++++++++',program);
 if(program.dll && program.manifest){
   throw new Error("dll means generate manifest.json while manifest is for DllReferencePlugin,can not exist same time!");
 }

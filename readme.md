@@ -210,4 +210,22 @@ DllPluginDync//shell传入manifest
 
 ### 5.说明
 
-(1)我们的ExtractTextPlugin采用的是contentHash,而不是chunkHash,原因可以阅读[Webpack中hash与chunkhash的区别，以及js与css的hash指纹解耦方案](http://www.cnblogs.com/ihardcoder/p/5623411.html)
+(1)我们的webpack入口文件必须在package.json或者自定义的webpack配置文件中至少一处配置(多处配置会合并)，如果两个地方都没有配置那么就会报错！
+
+(2)我们的ExtractTextPlugin采用的是contentHash,而不是chunkHash,原因可以阅读[Webpack中hash与chunkhash的区别，以及js与css的hash指纹解耦方案](http://www.cnblogs.com/ihardcoder/p/5623411.html)
+
+### 6.可能出现的问题
+
+(1)如果执行下面的命令不会自动打开浏览器，同时访问localhost:8080也无法访问
+
+```js
+wcf --devServer
+```
+
+这时候请加上--dev，因为其会访问html内置的模板,其默认的目录在test目录下，因为这个例子是内置的HMR的例子，如果你不需要查看这个例子，请使用shell参数htmlTemplate参数来指定模板路径(依然需要添加--dev参数，因为html-webpack-plugin是开发插件)
+
+(2)如果端口报错
+
+```js
+ new RangeError('"port" argument must be >= 0 and < 65536');//设置的端口必须是数值类型
+```
