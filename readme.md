@@ -43,6 +43,20 @@ wcf --watch --dev
 wcf --dev
 ```
 
+
+### 2.生产模式 vs 开发模式
+
+### 2.1 开发模式
+
+你需要通过添加`--dev`来开启开发模式。
+
+如果模块本身是支持HMR的，那么我们就会采用不刷新的方式来更新页面，否则采用传统的livereload的方式。但是该模式会添加很多非用户指定的代码，如实现HMR的功能的客户端代码，所以不建议在生产模式使用。而且此时生成的css是内联的，是为了实现HMR的(style-loader完美支持HMR)!
+
+### 2.2 生产模式
+
+此时你不需要指定`--dev`参数，去掉即可。该模式除了下面说的Plugin和开发环境不同以外，而且不再具有HMR的功能。所以打包生产的bundle较小！而且当你每次修改文件的时候需要手动刷新页面。此时会单独生成一个css文件(集成ExtractTextPlugin),而不是在开发模式模式下将css全部内联到html中!
+
+
 ### 2.该工具的配置参数
 
 注意，该工具的所有的配置都是基于webpack的，各个参数的意义和webpack是一致的。
@@ -184,13 +198,13 @@ HtmlWebpackPlugin
 ```js
 UglifyJsPlugin
 ImageminPlugin
+ExtractTextPlugin//dev模式不再具有该功能
 ```
 
 共有的包：
 
 ```js
 CommonsChunkPlugin
-ExtractTextPlugin
 StatsPlugin//shell参数传入--stj
 DllPluginDync//shell传入manifest
 ```
@@ -198,18 +212,27 @@ DllPluginDync//shell传入manifest
 
 ### 4.HMR功能的说明
 
-在webpack-dev-server模式下，我们暂时没有提供HMR的功能。如果你需要体验该功能，你只需要克隆该npm对应的git仓库，然后直接运行`node ./bin/wcf --dev --devServer`就可以了。关于HMR的相关内容你可以参考[这篇文章](https://github.com/liangklfangl/webpack-hmr)。注意，我们的devServer是如下的配置:
+在webpack-dev-server模式下，我们提供了HMR的功能，你不需要添加任何参数，默认开启。如果你需要体验该功能，只要在入口文件中加上下面的这句代码：(你也可以查看该项目对应的该[git仓库](https://github.com/liangklfangl/wcf)，其test目录是完全支持HMR功能的，你修改任何test目录下的代码都会重新加载)：
 
 ```js
-  devServer:{
-      publicPath:'/',
-      open :true,
-      port:8080,
-      contentBase:false,
+if (module.hot) {
+    module.hot.accept();
+  }
+```
+
+关于HMR的相关内容你可以参考[这篇文章](https://github.com/liangklfangl/webpack-hmr)。注意，我们的devServer是如下的配置:
+
+```js
+  devServer: {
+      publicPath: '/',
+      open: true,
+      port: 8080,
+      contentBase: false,
+      hot: true//强制开启HMR的
     }
 ```
 
-此时你运行wcf --devServer就会发现会自动打开页面，如果你不需要该功能可以通过自定义配置文件来覆盖它！
+此时你运行wcf --dev --devServer就会发现会自动打开页面，如果你不需要该功能可以通过自定义配置文件来覆盖open参数！
 
 
 ### 5.说明
@@ -233,3 +256,13 @@ wcf --devServer
 ```js
  new RangeError('"port" argument must be >= 0 and < 65536');//设置的端口必须是数值类型
 ```
+
+(3)必须安装webpack作为依赖，可以是全局安装也可以是局部安装
+
+```js
+npm install webpack -g//或者npm install webpack --save -dev
+```
+
+(4)无法打开URL
+
+此时请确保你的参数有--dev，因为如果没有这个参数那么我们不会添加HMR的插件，同时也不会添加HtmlWebpackPlugin,所以不会自动打开页面。

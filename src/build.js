@@ -10,6 +10,7 @@ import webpackWatch from "./webpackWatch";
 import webpackMerge from "webpack-merge";
 import { existsSync } from 'fs';
 import util from "util";
+import updateRules from "./updateRules";
 /** 
  * @param  {[type]} 
  * @param  {Function} 
@@ -24,7 +25,6 @@ export default function build(program,callback){
  if(program.htmlTemplate){
     useDefinedHtml = existsSync(path.resolve(process.cwd(),program.htmlTemplate)) ? path.resolve(process.cwd(),program.htmlTemplate) : defaultHtml;
  }
-
  let defaultWebpackConfig=webpackDefaultConfig(program);
  //get default webpack configuration
  if(program.outputPath){
@@ -44,13 +44,24 @@ if(program.stj){
 if(program.dev){
   defaultWebpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 }
-console.log('目标地址：',path.join(__dirname,"../test/index.html"));
+
 //we inject html by HtmlWebpackPlugin
 if(program.dev){
   defaultWebpackConfig.plugins.push(new HtmlWebpackPlugin({
     title :"HtmlPlugin",
     // filename :"index.html",
     template:path.join(__dirname,"../test/index.html"),
+    // template:(useDefinedHtml ? useDefinedHtml : defaultHtml),
+    //we must use html-loader here instead of file-loader
+    inject :"body",
+    cache : false,
+    xhtml :false
+  }));
+}else{
+  defaultWebpackConfig.plugins.push(new HtmlWebpackPlugin({
+    title :"HtmlPlugin",
+    // filename :"index.html",
+    template:path.join(__dirname,"../test/warning.html"),
     // template:(useDefinedHtml ? useDefinedHtml : defaultHtml),
     //we must use html-loader here instead of file-loader
     inject :"body",
@@ -103,6 +114,7 @@ if(program.manifest){
       ];
     }
   }
+
   //User defined webpack.config.js to update our common webpack config
   if(program.config){
     //defaultWebpackConfig = mergeCustomConfig(defaultWebpackConfig, resolve(program.cwd, program.config || 'webpack.config.js'));
@@ -112,10 +124,12 @@ if(program.manifest){
        defaultWebpackConfig=webpackMerge(defaultWebpackConfig, customConfig);
     }
   }
-  // console.log('combined：',util.inspect(defaultWebpackConfig,{showHidden:true,depth:3}));
+  //development mode , we should inject style-loader to support HMR!
+  defaultWebpackConfig = updateRules(defaultWebpackConfig,program.dev);
+  //in production mode
   //Whether we should start DevServer which serve file from memory instead of fileSystem
   if(program.devServer){
-    bundleWDevServer(defaultWebpackConfig);
+    bundleWDevServer(defaultWebpackConfig,program);
   }else{
     //we use watch method of webpack
     webpackWatch(defaultWebpackConfig,program);

@@ -5,6 +5,7 @@ import { tmpdir } from 'os';
 export default function getDefaultBabelConfig(){
  return {
     cacheDirectory: tmpdir(),
+    //We must set!
     presets: [
       require.resolve('babel-preset-es2015-ie'),
       require.resolve('babel-preset-react'),

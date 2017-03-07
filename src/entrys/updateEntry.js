@@ -10,7 +10,6 @@ module.exports = function addDevServerEntrypoints(webpackOptions, devServerOptio
       devClient.push("webpack/hot/only-dev-server");
     else if(devServerOptions.hot)
       devClient.push("webpack/hot/dev-server");
-   
     [].concat(webpackOptions).forEach(function(wpOpt) {
       if(typeof wpOpt.entry === "object" && !Array.isArray(wpOpt.entry)) {
         Object.keys(wpOpt.entry).forEach(function(key) {

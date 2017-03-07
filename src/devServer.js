@@ -28,7 +28,7 @@ function colorError(useColor, msg) {
  * @param  {[type]} defaultWebpackConfig [description]
  * @return {[type]}                      [description]
  */
-export default function bundleWDevServer(defaultWebpackConfig){
+export default function bundleWDevServer(defaultWebpackConfig,program){
  const devServerOpt = defaultWebpackConfig.devServer || {};
   //we get Server.js not webpack-dev-server command line , so we must open browser by ourself!
   if(!devServerOpt.host){
@@ -37,6 +37,10 @@ export default function bundleWDevServer(defaultWebpackConfig){
   //HMR, we force to disable hmr
   if(!devServerOpt.hot || devServerOpt.hot){
     devServerOpt.hot=true;
+  }
+
+  if(!program.dev){
+    devServerOpt.hot=false;
   }
   //set ContentBase
   if(devServerOpt.contentBase === undefined) {

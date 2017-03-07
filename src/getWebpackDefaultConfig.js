@@ -4,6 +4,9 @@ import getDefaultBabelConfig from './getBabelDefaultConfig';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import webpack from 'webpack';
 import ImageminPlugin from 'imagemin-webpack-plugin';
+import autoprefixer from 'autoprefixer';
+import LoaderOptionsPlugin from 'webpack/lib/LoaderOptionsPlugin';
+
 /**
  * [isWin : whether running in windows platform]
  * @return {Boolean} [description]
@@ -114,10 +117,11 @@ export default function getWebpackCommonConfig(program){
            		}
            	}
           },
-          {
-            test: /\.scss$/,
-            loaders: ["style-loader", "css-loader", "sass-loader"]
-        },
+          //loaders for sass
+        //   {
+        //     test: /\.scss$/,
+        //     loaders: [require.resolve("style-loader"), require.resolve("css-loader"), require.resolve("sass-loader")]
+        // },
           {
 	          test: /\.js(x)*/,
 	          exclude: function(path){
@@ -125,115 +129,12 @@ export default function getWebpackCommonConfig(program){
                return isNpmModule;
             },
             //exclude node_modules folder, or we can use include config to include some path 
-	          loader: 'babel-loader?cacheDirectory',
+	          loader: require.resolve('babel-loader'),
 	          query: getDefaultBabelConfig(),
-	        }, {
-             	test:/\.less$/,
-             	use:ExtractTextPlugin.extract({
-              fallback : require.resolve('style-loader'),
-               use :[{
-  			              loader: require.resolve('css-loader'),
-  			              options: { 
-                           modules:true,
-                          //enable css module,You can switch it off with :global(...) or :global for selectors and/or rules.
-                           localIdentName: '[path][name]__[local]--[hash:base64:5]',
-                           //path will be replaced by file path(foler path relative to project root)
-                           //name will be replaced by file name
-                           //local will be replaced by local class name
-                          sourceMap:true,
-                          //the extract-text-webpack-plugin can handle them.
-                          importLoaders: 1,
-                          // That many loaders after the css-loader are used to import resources.
-                          minimize: true,
-                          //You can also disable or enforce minification with the minimize query parameter.
-                          camelCase: true
-  			              }
-  			            },{
-                       //autoprefix your css
-                        loader:require.resolve('postcss-loader'),
-                        options:{
-                       	 plugins:function(){
-                       	 	 return [
-                                 require('precss'),
-                                 require('autoprefixer')
-                       	 	  ]
-                       	 }
-                       }
-                    },{
-                  loader:require.resolve('less-loader'),
-                  options:{
-                   	sourceMap:true,
-                    lessPlugins:[
-                      
-                    ]
-                  	//sourcemaps are only available in conjunction with the extract-text-webpack-plugin
-                    // modifyVars: JSON.stringify(theme)
-                   //using theme config in package.json to modify default less variables
-                  }
-                }
-             	]})
-             },
-	          //https://github.com/postcss/postcss-loader
-             {
-		        test: /\.css$/,
-		        use: ExtractTextPlugin.extract({
-                    fallback : require.resolve('style-loader'),
-                use:[
-		             {
-		            	 loader:require.resolve('css-loader'),
-			           	 options:{
-			           	      	 modules:true,
-			           	 	      //enable css module,You can switch it off with :global(...) or :global for selectors and/or rules.
-	                         localIdentName: '[path][name]__[local]--[hash:base64:5]',
-	                         //path will be replaced by file path(foler path)
-	                         //name will be replaced by file name
-	                         //local will be replaced by local class name
-	                        sourceMap:true,
-	                        //the extract-text-webpack-plugin can handle them.
-	                        importLoaders: 1,
-	                        // That many loaders after the css-loader are used to import resources.
-	                        minimize: true,
-	                        //You can also disable or enforce minification with the minimize query parameter.
-	                        camelCase: true
-			           	 }
-			           	 //https://github.com/webpack-contrib/css-loader#css-composing
-			           },
-			            {
-                   loader: 'postcss-loader?sourceMap=inline',
-                   options:{
-                   	 plugins:function(){
-                   	 	 return [
-                               require('autoprefixer')({
-                                     browsers: ['last 2 versions', 'Firefox ESR', '> 1%', 'ie >= 8', 'iOS >= 8', 'Android >= 4'],
-                                     //browsers (array): list of browsers query (like last 2 version), which are supported in 
-                                     //your project. We recommend to use browserslist config or browserslist key in package.json, 
-                                     //rather than this option to share browsers with other tools. See Browserslist docs for available queries and default value.
-                                     cascade : true,
-                                     //then beatified as follows with right indent
-                                    //-webkit-transform: rotate(45deg);
-                                    //        transform: rotate(45deg); 
-                                    add : false,
-                                    //Autoprefixer will only clean outdated prefixes, but will not add any new prefixes.  
-                                    remove :false ,
-                                    //By default, Autoprefixer also removes outdated prefixes.
-                                    //You can disable this behavior with the remove: false option. 
-                                    //If you have no legacy code, this option will make Autoprefixer about 10% faster.  
-                                    support : true,
-                                    //should Autoprefixer add prefixes for @supports parameters.  
-                                    flexbox : true,                   	                                 
-                                    //should Autoprefixer add prefixes for flexbox properties. With "no-2009" 
-                                    //value Autoprefixer will add prefixes only for final and IE versions of specification. Default is true.
-                                    grid  :true,
-                                    //should Autoprefixer add IE prefixes for Grid Layout properties
-                                    // more in https://github.com/postcss/autoprefixer
-                                  })
-	                       	 	  ]
-	                       	 }
-	                       }
-			           }
-		         
-		        ]})
-		      }
+	        },
+          //这里使用ExtractTextPlugin.extract方法报错self is undefined!
+          //We should not use 
+         //https://github.com/postcss/postcss-loader
 	    ]
 	},
   plugins: [
@@ -278,7 +179,17 @@ export default function getWebpackCommonConfig(program){
       jpegtran :{
         progressive: false 
       }
-   })]
+   }),
+   //autoprefixer plugin
+    new LoaderOptionsPlugin({
+      options: {
+        context: '/',
+        postcss: function () {
+          return [autoprefixer];
+        }
+      }
+    })
+   ]
 
   }
 
