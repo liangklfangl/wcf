@@ -11,12 +11,7 @@ import webpackMerge from "webpack-merge";
 import { existsSync } from 'fs';
 import util from "util";
 import updateRules from "./updateRules";
-/** 
- * @param  {[type]} 
- * @param  {Function} 
- * @return {[type]}
- * Default webpack configuration will be replaced by parameters from shell
- */
+
 export default function build(program,callback){
  const defaultHtml = "../test/index.html";
  let useDefinedHtml ="";

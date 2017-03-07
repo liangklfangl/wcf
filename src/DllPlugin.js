@@ -1,11 +1,7 @@
 import webpack from "webpack";
 import resolve from "resolve";
 import path from "path";
-/**
- * [isAbsolutePath description]
- * @param  {[type]}  filename [description]
- * @return {Boolean}          [description]
- */
+
 function isRelativePath(filename){
   return filename.indexOf(".")===0;
 }

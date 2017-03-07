@@ -7,10 +7,7 @@ import ImageminPlugin from 'imagemin-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import LoaderOptionsPlugin from 'webpack/lib/LoaderOptionsPlugin';
 
-/**
- * [isWin : whether running in windows platform]
- * @return {Boolean} [description]
- */
+
 function isWin(){
   return process.platform.indexOf('win')===0;
 }

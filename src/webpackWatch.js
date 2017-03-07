@@ -3,11 +3,7 @@
  import chokidar  from "chokidar";
  import path from "path";
  import { existsSync } from 'fs';
-/**
- * [webpackWatch Receive webpack default configuration]
- * @param  {[type]} defaultWebpackConfig [description]
- * @return {[type]}                      [description]
- */
+
 export default function webpackWatch(defaultWebpackConfig,program){
    const compiler = webpack(defaultWebpackConfig);
    let watching = null;

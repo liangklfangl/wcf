@@ -2,8 +2,6 @@ import WebpackDevServer from "webpack-dev-server/lib/Server";
 import opn from "opn";
 import webpack from "webpack";
 import portfinder from "portfinder";
-// import addDevServerEntrypoints from "webpack-dev-server/lib/util/addDevServerEntrypoints";
-// import createDomain from "webpack-dev-server/lib/util/createDomain";
 import addDevServerEntrypoints from "./entrys/updateEntry";
 import createDomain  from "./entrys/createDomain";
 import chokidar  from "chokidar";
