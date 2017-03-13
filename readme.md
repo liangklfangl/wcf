@@ -16,16 +16,16 @@ npm install -g webpackcc//必须注意，我们局部安装的优先级要高于
 
 ### 1.该工具的三种打包模式
 
-#### 1.1 webpack-dev-server模式
+#### 1.1 webpack-dev-server模式(Best Performance)
 
-这种模式你只要在wcf后添加devServer参数，表明我们的文件应该使用webpack-dev-server来完成打包，此时所有的生成文件都会在内存中，而不会写入磁盘，效率比下面两种模式高，也是最推荐的一种打包模式。同时该模式会自动在output.path路径下通过html-webpack-plugin产生一个html(内存中不可见,同时需要加上--dev表明是开发模式),并自动加载我们的所有chunk.
+这种模式你只要在wcf后添加devServer参数，表明我们的文件应该使用webpack-dev-server来完成打包，此时所有的生成文件都会在内存中，而不会写入磁盘，效率比下面两种模式高，也是最推荐的一种打包模式(该模式绕过了写本地磁盘这一步，所以文件如果改变直接从内存中读取的速度要比其他方式高得多)。同时该模式会自动在output.path路径下通过html-webpack-plugin产生一个html(内存中不可见,同时需要加上--dev表明是开发模式),并自动加载我们的所有chunk.
 
 ```js
  wcf --devServer --dev
  //此时打开localhost:8080就会看到我们使用test/index.html作为template的页面，如果你需要修改template请使用下面的htmlTemplate参数
 ```
 
-#### 1.2 webpack本身的watch模式
+#### 1.2 webpack本身的watch模式(OK performance)
 
 这种模式使用webpack自己的watch方法来完成，监听package.json中entry配置的文件的变化。你需要添加--watch --dev。如下:
 

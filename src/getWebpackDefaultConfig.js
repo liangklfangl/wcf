@@ -6,7 +6,7 @@ import webpack from 'webpack';
 import ImageminPlugin from 'imagemin-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 import LoaderOptionsPlugin from 'webpack/lib/LoaderOptionsPlugin';
-
+import updateRules from "./updateRules/index.js";
 
 function isWin(){
   return process.platform.indexOf('win')===0;
@@ -33,10 +33,12 @@ function isDevMode(program){
 }
 
 /**
- * @param  {[type]}
- * @return {[type]}
+ * [getWebpackCommonConfig description]
+ * @param  {[type]}  program         [description]
+ * @param  {Boolean} isProgramInvoke [Whether or not used as command line]
+ * @return {[type]}                  [description]
  */
-export default function getWebpackCommonConfig(program){
+export default function getWebpackCommonConfig(program,isProgramInvoke){
   let packagePath = path.join(program.cwd,'package.json');
   packagePath = isWin()? packagePath.split(path.sep).join("/"):packagePath;
   const packageConfig = existsSync(packagePath) ? require(packagePath) : {};
@@ -62,7 +64,7 @@ export default function getWebpackCommonConfig(program){
  const lf=isWin() ? path.join(__dirname, '../node_modules').split(path.sep).join("/") :path.join(__dirname, '../node_modules');
  const outputPath = isWin() ? path.join(program.cwd, './dest/').split(path.sep).join("/") : path.join(program.cwd, './dest/') ;
   
-  return {
+let commonConfig = {
     cache:false, 
      //Cache the generated webpack modules and chunks to improve build speed. 
      //Caching is enabled by default while in watch mode
@@ -73,7 +75,7 @@ export default function getWebpackCommonConfig(program){
     resolve:{
       // modules :["node_modules",path.join(__dirname, '../node_modules')],
       // moduleDirectories : ["node_modules"],
-      // extensions: ['', '.web.jsx', '.web.js',  '.js', '.jsx', '.json'],
+      extensions: ['.js', '.jsx', '.json','.less','.scss','.css','.png','*'],
       // last two configuration is for webpack1
       // for detail :https://github.com/webpack/webpack/issues/472#issuecomment-55706013
     },
@@ -114,11 +116,6 @@ export default function getWebpackCommonConfig(program){
            		}
            	}
           },
-          //loaders for sass
-        //   {
-        //     test: /\.scss$/,
-        //     loaders: [require.resolve("style-loader"), require.resolve("css-loader"), require.resolve("sass-loader")]
-        // },
           {
 	          test: /\.js(x)*/,
 	          exclude: function(path){
@@ -187,7 +184,10 @@ export default function getWebpackCommonConfig(program){
       }
     })
    ]
-
   }
-
+  //Whether or not required by other program
+  if(isProgramInvoke){
+     updateRules(commonConfig,false);
+  }
+ return commonConfig;
 }
