@@ -188,7 +188,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
   //Whether or not required by other program
   if(isProgramInvoke){
      updateRules(commonConfig,false);
-     commonConfig.push(new ExtractTextPlugin({
+     commonConfig.plugins.push(new ExtractTextPlugin({
       filename:'common.css',
       allChunks:false,
       disable:false,
@@ -196,13 +196,13 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
       //Disables order check (useful for CSS Modules!),
     }))
   }else{
-    new ExtractTextPlugin({
+      commonConfig.plugins.push(new ExtractTextPlugin({
       filename:'etp-[contenthash].css',
       allChunks:false,
       disable:false,
       ignoreOrder:false
       //Disables order check (useful for CSS Modules!),
-    })
+    }))
   }
  return commonConfig;
 }

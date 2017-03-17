@@ -7,7 +7,7 @@ exports = module.exports = __webpack_require__(6)();
 
 
 // module
-exports.push([module.i, "html {\n  border: 1px solid yellow;\n  background-color: pink;\n  display: flex; }\n\n/*wcf/test/styles.scss*/\nbody {\n  background-color: lightgray;\n  color: black; }\n  body div {\n    font-weight: bold; }\n    body div span {\n      font-weight: normal; }\n", ""]);
+exports.push([module.i, "html{border:1px solid #ff0;background-color:red;display:-webkit-box;display:-ms-flexbox;display:flex}body{background-color:#d3d3d3;color:#000}body div{font-weight:700}body div span{font-weight:400}", "", {"version":3,"sources":["/./Users/Administrator/Desktop/wcf/test/styles.scss"],"names":[],"mappings":"AAAA,KACE,sBAAyB,AACzB,qBAAsB,AACtB,oBAAc,AAAd,oBAAc,AAAd,YAAc,CAAE,AAGlB,KACE,yBAA4B,AAC5B,UAAa,CAAE,AACf,SACE,eAAkB,CAAE,AACpB,cACE,eAAoB,CAAE","file":"styles.scss","sourcesContent":["html {\n  border: 1px solid yellow;\n  background-color: red;\n  display: flex; }\n\n/*wcf/test/styles.scss*/\nbody {\n  background-color: lightgray;\n  color: black; }\n  body div {\n    font-weight: bold; }\n    body div span {\n      font-weight: normal; }\n"],"sourceRoot":"webpack://"}]);
 
 // exports
 
