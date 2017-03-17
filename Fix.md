@@ -1,0 +1,1 @@
+### 1.这里我们使用了if/else判断来解决程序调用和CLI调用的extract-text-webpack-plugin的不一致，但是程序调用的时候完全设置为common.css而不能添加任何hash

@@ -64,7 +64,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
  const lf=isWin() ? path.join(__dirname, '../node_modules').split(path.sep).join("/") :path.join(__dirname, '../node_modules');
  const outputPath = isWin() ? path.join(program.cwd, './dest/').split(path.sep).join("/") : path.join(program.cwd, './dest/') ;
   
-let commonConfig = {
+ let commonConfig = {
     cache:false, 
      //Cache the generated webpack modules and chunks to improve build speed. 
      //Caching is enabled by default while in watch mode
@@ -133,13 +133,13 @@ let commonConfig = {
 	},
   plugins: [
    //from https://github.com/webpack-contrib/extract-text-webpack-plugin
-    new ExtractTextPlugin({
-    	filename:'etp-[contenthash].css',
-    	allChunks:false,
-    	disable:false,
-    	ignoreOrder:false
-    	//Disables order check (useful for CSS Modules!),
-    }),
+    // new ExtractTextPlugin({
+    // 	filename:'etp-[contenthash].css',
+    // 	allChunks:false,
+    // 	disable:false,
+    // 	ignoreOrder:false
+    // 	//Disables order check (useful for CSS Modules!),
+    // }),
     //chunk less than this size will be merged
     new webpack.optimize.MinChunkSizePlugin({
     	minChunkSize:1000
@@ -188,6 +188,21 @@ let commonConfig = {
   //Whether or not required by other program
   if(isProgramInvoke){
      updateRules(commonConfig,false);
+     commonConfig.push(new ExtractTextPlugin({
+      filename:'common.css',
+      allChunks:false,
+      disable:false,
+      ignoreOrder:false
+      //Disables order check (useful for CSS Modules!),
+    }))
+  }else{
+    new ExtractTextPlugin({
+      filename:'etp-[contenthash].css',
+      allChunks:false,
+      disable:false,
+      ignoreOrder:false
+      //Disables order check (useful for CSS Modules!),
+    })
   }
  return commonConfig;
 }
