@@ -266,3 +266,14 @@ npm install webpack -g//或者npm install webpack --save -dev
 (4)无法打开URL
 
 此时请确保你的参数有--dev，因为如果没有这个参数那么我们不会添加HMR的插件，同时也不会添加HtmlWebpackPlugin,所以不会自动打开页面。
+
+
+### 7.changelog
+
+(1)2.0.13
+
+  在开发环境下我们不再将css/less/sass等文件单独抽取出来，而是使用style-loader加载，因此可以原生支持HMR。但是在生产环境中，我们会单独抽取出来作为common.css
+
+(2)2.0.14
+
+如果你需要支持css module，那么命名css文件的时候请加上后缀为"module.css"，less,sass等文件也是一样的道理！
