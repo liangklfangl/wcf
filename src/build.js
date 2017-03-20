@@ -113,7 +113,7 @@ if(program.manifest){
   //User defined webpack.config.js to update our common webpack config
   if(program.config){
     //defaultWebpackConfig = mergeCustomConfig(defaultWebpackConfig, resolve(program.cwd, program.config || 'webpack.config.js'));
-    const customWebpackConfigPath = resolve(program.cwd,program.config || 'webpack.config.js');
+    const customWebpackConfigPath = path.resolve(program.cwd,program.config || 'webpack.config.js');
     if(existsSync(customWebpackConfigPath)){
       const customConfig = require(customWebpackConfigPath);
        defaultWebpackConfig=webpackMerge(defaultWebpackConfig, customConfig);

@@ -1,4 +1,12 @@
 html{
-	background-color:red;
+	background-color:pink;
 	display:flex;
+}
+
+.header{
+	color: red;
+}
+
+.footer{
+	color:blue;
 }

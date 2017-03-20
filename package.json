@@ -1,6 +1,6 @@
 {
   "name": "webpackcc",
-  "version": "2.0.14",
+  "version": "2.0.15",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -83,6 +83,7 @@
     "babel-eslint": "^6.1.2",
     "babel-istanbul": "^0.7.0",
     "jquery": "^3.1.1",
+    "mark-twain": "^1.1.6",
     "mustache": "^2.3.0"
   },
   "homepage": "https://github.com/liangklfangl/wcf#readme"

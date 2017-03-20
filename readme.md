@@ -276,4 +276,12 @@ npm install webpack -g//或者npm install webpack --save -dev
 
 (2)2.0.14
 
-如果你需要支持css module，那么命名css文件的时候请加上后缀为"module.css"，less,sass等文件也是一样的道理！
+如果你需要支持css module，那么命名css文件的时候请加上后缀为"module.css"，less,sass等文件也是一样的道理！此时在页面中你就可以直接*require*我们的文件了
+
+(3)2.0.15支持采用--config来修改默认配置
+
+```js
+wcf --config ./webpack.config.js --devServer --dev
+```
+
+我们默认采用webpack-merge来合并配置。启动后修改test/code.md，你会发现页面会自动刷新！在wcf的根目录下添加了webpack.config.js，你会发现此时我们可以处理markdown文件了。(注意：如果你没有添加该webpack.config.js那么运行的时候会报错)

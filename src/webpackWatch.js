@@ -34,11 +34,11 @@ export default function webpackWatch(defaultWebpackConfig,program){
 function doneHandler(err, stats) {
   //get all errors
   if(stats.hasErrors()){
-  	printErrors(stats.errors,true);
+  	printErrors(stats.compilation.errors,true);
   }
   const warnings =stats.warnings && stats.warnings.length==0;
   if(stats.hasWarnings()){
-  	printErrors(stats.warnings);
+  	printErrors(stats.compilation.warnings);
   }
  console.log("Compilation finished!\n");
 
@@ -54,5 +54,5 @@ function printErrors(errors,isError=false) {
 		return stripAnsi(error);
 	});
 	for(let i = 0; i < strippedErrors.length; i++)
-		isErro ? console.error(strippedErrors[i]) : console.warn(strippedErrors[i]);
+		isError ? console.error(strippedErrors[i]) : console.warn(strippedErrors[i]);
 }
