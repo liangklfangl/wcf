@@ -45,7 +45,7 @@ if(program.dev){
   defaultWebpackConfig.plugins.push(new HtmlWebpackPlugin({
     title :"HtmlPlugin",
     // filename :"index.html",
-    template:path.join(__dirname,"../test/index.html"),
+    template:useDefinedHtml || path.join(__dirname,"../test/index.html"),
     // template:(useDefinedHtml ? useDefinedHtml : defaultHtml),
     //we must use html-loader here instead of file-loader
     inject :"body",
@@ -129,7 +129,7 @@ if(program.manifest){
     //we use watch method of webpack
     webpackWatch(defaultWebpackConfig,program);
   }
- 
+ return defaultWebpackConfig;
 }
 
 

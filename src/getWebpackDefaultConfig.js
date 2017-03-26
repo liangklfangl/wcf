@@ -69,7 +69,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
      //Cache the generated webpack modules and chunks to improve build speed. 
      //Caching is enabled by default while in watch mode
    	output: {
-      path: outputPath,
+      path: path.resolve(outputPath),
       filename: jsFileName
     },
     resolve:{
@@ -89,7 +89,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
     devtool: program.devtool || "cheap-source-map",
     entry: deltPathCwd(program,packageConfig.entry),
     //prepend it with cwd
-    context:isWin() ? program.cwd.split(path.sep).join('/') : program.cwd,
+    context:isWin() ? path.resolve(program.cwd.split(path.sep).join('/')) : path.resolve(program.cwd),
     //The base directory (absolute path!) for resolving the entry option
   	module: {
       noParse:[/jquery/],
@@ -186,6 +186,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
    ]
   }
   //Whether or not required by other program
+  //we are now in `production` mode
   if(isProgramInvoke){
      updateRules(commonConfig,false);
      commonConfig.plugins.push(new ExtractTextPlugin({
@@ -196,13 +197,14 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
       //Disables order check (useful for CSS Modules!),
     }))
   }else{
-      commonConfig.plugins.push(new ExtractTextPlugin({
-      filename:'etp-[contenthash].css',
-      allChunks:false,
-      disable:false,
-      ignoreOrder:false
-      //Disables order check (useful for CSS Modules!),
-    }))
+      //We are now in `dev` mode
+    //   commonConfig.plugins.push(new ExtractTextPlugin({
+    //   filename:'etp-[contenthash].css',
+    //   allChunks:false,
+    //   disable:false,
+    //   ignoreOrder:false
+    //   //Disables order check (useful for CSS Modules!),
+    // }))
   }
  return commonConfig;
 }
