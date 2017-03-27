@@ -117,16 +117,32 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
            	}
           },
           {
-	          test: /\.js(x)*/,
-	          exclude: function(path){
-               var isNpmModule=!!path.match(/node_modules/);
-               return isNpmModule;
-            },
+	          test: /\.js$/,
+	          // exclude: function(path){
+           //     var isNpmModule=!!path.match(/node_modules/);
+           //     return isNpmModule;
+           //  },
+            exclude :"node_modules",
             //exclude node_modules folder, or we can use include config to include some path 
-	          loader: require.resolve('babel-loader'),
-	          query: getDefaultBabelConfig(),
+	          use: [{
+               loader: "babel-loader",
+               options:{}
+            }]
 	        },
-          //这里使用ExtractTextPlugin.extract方法报错self is undefined!
+           {
+            test: /\.jsx$/,
+            exclude :"node_modules",
+            // exclude: function(path){
+            //    var isNpmModule=!!path.match(/node_modules/);
+            //    return isNpmModule;
+            // },
+            //exclude node_modules folder, or we can use include config to include some path 
+            use: [{
+              loader:'babel-loader',
+              options:{}
+            }]
+          }
+          //ExtractTextPlugin.extract here will throw `self is undefined!`
           //We should not use 
          //https://github.com/postcss/postcss-loader
 	    ]
@@ -186,7 +202,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
    ]
   }
   //Whether or not required by other program
-  //we are now in `production` mode
+  //we are now in `production` mode， we will extract css file from js file
   if(isProgramInvoke){
      updateRules(commonConfig,false);
      commonConfig.plugins.push(new ExtractTextPlugin({
@@ -197,14 +213,16 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
       //Disables order check (useful for CSS Modules!),
     }))
   }else{
-      //We are now in `dev` mode
-    //   commonConfig.plugins.push(new ExtractTextPlugin({
-    //   filename:'etp-[contenthash].css',
-    //   allChunks:false,
-    //   disable:false,
-    //   ignoreOrder:false
-    //   //Disables order check (useful for CSS Modules!),
-    // }))
+      // if we are now in `production` mode, we will extract css from js file, else we will not to support HMR
+    if(!isDevMode(program)){
+      commonConfig.plugins.push(new ExtractTextPlugin({
+      filename:'etp-[contenthash].css',
+      allChunks:false,
+      disable:false,
+      ignoreOrder:false
+      //Disables order check (useful for CSS Modules!),
+    }))
+    }
   }
  return commonConfig;
 }

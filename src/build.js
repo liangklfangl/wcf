@@ -7,10 +7,15 @@ import DllPluginDync from 'dllplugindync';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import bundleWDevServer from "./devServer";
 import webpackWatch from "./webpackWatch";
-import webpackMerge from "webpack-merge";
 import { existsSync } from 'fs';
 import util from "util";
 import updateRules from "./updateRules";
+import merge from "webpack-merge";
+import uniqueRule from "./updateRules/dedupeRule";
+import uniquePlugin from "./updateRules/dedupePlugin";
+import uniqueItem from "./updateRules/dedupeItem";
+//Unique plugin and rule and item etc
+const exist = require('exist.js');
 
 export default function build(program,callback){
  const defaultHtml = "../test/index.html";
@@ -109,18 +114,27 @@ if(program.manifest){
       ];
     }
   }
-
   //User defined webpack.config.js to update our common webpack config
   if(program.config){
     //defaultWebpackConfig = mergeCustomConfig(defaultWebpackConfig, resolve(program.cwd, program.config || 'webpack.config.js'));
     const customWebpackConfigPath = path.resolve(program.cwd,program.config || 'webpack.config.js');
     if(existsSync(customWebpackConfigPath)){
-      const customConfig = require(customWebpackConfigPath);
-       defaultWebpackConfig=webpackMerge(defaultWebpackConfig, customConfig);
+       const customConfig = require(customWebpackConfigPath);
+         defaultWebpackConfig=uniqueItem.dedupeItem(defaultWebpackConfig,customConfig);
+       //unique webpack loaders
+       if(exist.get(customConfig,"module.rules")){
+          uniqueRule.dedupeRule(defaultWebpackConfig,customConfig);
+       }
+         //unique our plugins
+       if(exist.get(customConfig,"plugins")){
+         uniquePlugin.dedupePlugin(defaultWebpackConfig,customConfig);
+      }
     }
   }
+
   //development mode , we should inject style-loader to support HMR!
   defaultWebpackConfig = updateRules(defaultWebpackConfig,program.dev);
+  // console.log('-------------',util.inspect(defaultWebpackConfig,{showHidden:true,depth:4}));
   //in production mode
   //Whether we should start DevServer which serve file from memory instead of fileSystem
   if(program.devServer){

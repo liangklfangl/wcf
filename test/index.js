@@ -1,7 +1,7 @@
 import * as dom from './dom';
 import * as time from './time';
 import pulse from './pulse';
-require('./styles.scss');
+require('./styles.less');
 // const markdown = require('./code.md');
 // console.log(markdown);
 // If you add --config ./webpack.config.js in wcf command, you can open this comment!

@@ -189,24 +189,32 @@ sass文件采用如下三个loader顺次加载：
 
 ```js
 HotModuleReplacementPlugin
+//支持HMR
 HtmlWebpackPlugin
-//在output目录下产生一个index.html，但是该文件是在内存中的
+//在output目录下产生一个index.html(生产环境下也会添加该plugin，只是不再支持HMR，并要求用户手动刷新页面)
 ```
 
 生产环境独有的plugin：
 
 ```js
-UglifyJsPlugin
-ImageminPlugin
-ExtractTextPlugin//dev模式不再具有该功能
+UglifyJsPlugin//压缩JS
+ImageminPlugin //压缩图片
+ExtractTextPlugin//单独将css抽取出来，并要求用户手动刷新页面
 ```
 
 共有的包：
 
 ```js
 CommonsChunkPlugin
-StatsPlugin//shell参数传入--stj
-DllPluginDync//shell传入manifest
+//抽取公共的模块到common.js中
+MinChunkSizePlugin
+//减少chunk个数
+LoaderOptionsPlugin
+//兼容性要求
+StatsPlugin
+//shell参数传入--stj
+DllPluginDync
+//shell传入manifest
 ```
 
 
@@ -285,3 +293,27 @@ wcf --config ./webpack.config.js --devServer --dev
 ```
 
 我们默认采用webpack-merge来合并配置。启动后修改test/code.md，你会发现页面会自动刷新！在wcf的根目录下添加了webpack.config.js，你会发现此时我们可以处理markdown文件了。(注意：如果你没有添加该webpack.config.js那么运行的时候会报错)
+
+(4)2.0.18对配置的多个loader/plugin进行去重，防止用户配置了多余的loader/plugin（根据Constructor来判断）。同时对于其他的配置项进行替换。注意：
+
+例如我们的devServer默认配置是:
+
+```js
+ devServer:{
+      publicPath:'/',
+      open :true,//默认开启浏览器
+      port:8080,
+      contentBase:false,
+      hot:false
+    }
+```
+
+如果用户配置如下:
+
+```js
+devServer:{
+  port:8888
+}
+```
+
+此时后面的配置会完全覆盖前面的默认配置，`这一点一定要注意`！所以我们并不会自动开启浏览器来监听8888，而是要用户手动开启http://localhost:8888！
