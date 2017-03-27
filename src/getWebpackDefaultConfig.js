@@ -125,8 +125,8 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
             exclude :path.resolve("node_modules"),
             //exclude node_modules folder, or we can use include config to include some path 
 	          use: [{
-               loader: "babel-loader",
-               options:{}
+               loader: require.resolve("babel-loader"),
+               options:getDefaultBabelConfig.getDefaultBabel()
             }]
 	        },
            {
@@ -138,8 +138,8 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
             // },
             //exclude node_modules folder, or we can use include config to include some path 
             use: [{
-              loader:'babel-loader',
-              options:{}
+              loader:require.resolve('babel-loader'),
+              options:getDefaultBabelConfig.getDefaultBabel()
             }]
           }
           //ExtractTextPlugin.extract here will throw `self is undefined!`

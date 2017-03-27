@@ -2,7 +2,7 @@ import { tmpdir } from 'os';
 /**
  * @return {[type]}
  */
-export default function getDefaultBabelConfig(){
+function getDefaultBabelConfig(){
  return {
     cacheDirectory: tmpdir(),
     //We must set!
@@ -16,4 +16,8 @@ export default function getDefaultBabelConfig(){
       require.resolve('babel-plugin-transform-decorators-legacy'),
     ],
   };
+}
+
+module.exports = {
+  getDefaultBabel : getDefaultBabelConfig
 }

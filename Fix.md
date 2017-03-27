@@ -14,3 +14,41 @@
 ### 4.plugin等也要去重
 
 ### 5.plugins和loaders去重了，其他的字段我还没有merge
+
+### 6.如何对babel配置进行修改，添加.babelrc是否可以。我们使用一个webpackMerge进行合并
+
+```js
+ {
+    "presets": [
+    ],
+    "plugins": [
+      "react-hot-loader/babel"
+    ]
+  }
+```
+
+如果需要如下:
+
+```js
+{
+  "presets": [
+    ["es2015", { "modules": false }],
+    "react",
+    "airbnb"
+  ],
+  "plugins": [
+    "transform-decorators-legacy",
+    "transform-object-rest-spread",
+    "react-hot-loader/babel"
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        "transform-decorators-legacy",
+        "transform-object-rest-spread",
+        "istanbul"
+      ]
+    }
+  }
+}
+```
