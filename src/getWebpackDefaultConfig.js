@@ -122,7 +122,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
            //     var isNpmModule=!!path.match(/node_modules/);
            //     return isNpmModule;
            //  },
-            exclude :"node_modules",
+            exclude :path.resolve("node_modules"),
             //exclude node_modules folder, or we can use include config to include some path 
 	          use: [{
                loader: "babel-loader",
@@ -131,7 +131,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
 	        },
            {
             test: /\.jsx$/,
-            exclude :"node_modules",
+            exclude :path.resolve("node_modules"),
             // exclude: function(path){
             //    var isNpmModule=!!path.match(/node_modules/);
             //    return isNpmModule;
