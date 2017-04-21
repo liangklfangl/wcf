@@ -69,7 +69,6 @@ if(program.dev){
     xhtml :false
   }));
 }
-
 //we inject DllReferencePlugin
 if(program.manifest){
   defaultWebpackConfig.plugins.push(new DllPluginDync({
@@ -129,6 +128,8 @@ if(program.manifest){
        if(exist.get(customConfig,"plugins")){
          uniquePlugin.dedupePlugin(defaultWebpackConfig,customConfig);
       }
+      if(program.karma)
+        uniquePlugin.optimizeKarmaPlugin(defaultWebpackConfig);
     }
   }
 
@@ -137,6 +138,14 @@ if(program.manifest){
   // console.log('-------------',util.inspect(defaultWebpackConfig,{showHidden:true,depth:4}));
   //in production mode
   //Whether we should start DevServer which serve file from memory instead of fileSystem
+  if(program.karma){
+    //We are now in `test` mode , we just only get webpack configuration with commonchunkplugin removed!
+    return defaultWebpackConfig;
+  }
+  //Just get config without bundling
+  if(program.onlyCf){
+    return defaultWebpackConfig;
+  }
   if(program.devServer){
     bundleWDevServer(defaultWebpackConfig,program);
   }else{

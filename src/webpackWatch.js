@@ -23,6 +23,7 @@ export default function webpackWatch(defaultWebpackConfig,program){
   } else {
     compiler.run(doneHandler.bind(program));
   }
+  return compiler;
 }
 
 /**
@@ -32,6 +33,7 @@ export default function webpackWatch(defaultWebpackConfig,program){
  * @return {[type]}       [description]
  */
 function doneHandler(err, stats) {
+
   //get all errors
   if(stats.hasErrors()){
   	printErrors(stats.compilation.errors,true);

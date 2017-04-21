@@ -317,3 +317,21 @@ devServer:{
 ```
 
 此时后面的配置会完全覆盖前面的默认配置，`这一点一定要注意`！所以我们并不会自动开启浏览器来监听8888，而是要用户手动开启http://localhost:8888！
+
+(5)2.0.21支持直接调用webpackcc/lib/build的build方法来获取webpack通用配置(请添加`onlyCf:true`),此时不再启动默认打包，只是获取webpack打包配置而已。如果你是在测试模式下，请传入karma:true，此时会移除commonchunkplugin[commonchunkplugin](https://github.com/webpack-contrib/karma-webpack/issues/24)，而且此时不再打包，只是获取webpack打包配置而已。
+
+```js
+const build = require('webpackcc/lib/build');
+const path = require('path');
+const util = require('util');
+const program = {
+   cwd : process.cwd(),
+   dev : true,
+   karma:true,
+   //表示是测试模式，此时不再添加commonchunkplugin，而且不再打包，只是获取打包配置
+   config : path.join(__dirname,"./cfg/test.js")
+}
+const webpackConfig = build(program,function(){});
+```
+
+注意：配置karma和onlyCf是两种获取通用配置的方法，而且此时不会打包。前者是获取karma打包的配置，而后者只是简单获取打包配置而已！

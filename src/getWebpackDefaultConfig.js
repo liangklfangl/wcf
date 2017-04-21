@@ -214,14 +214,25 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
     }))
   }else{
       // if we are now in `production` mode, we will extract css from js file, else we will not to support HMR
+      // so extract method of loader configured must be removed! So in case of this error, we will add this plugin
+      // for a hack
     if(!isDevMode(program)){
       commonConfig.plugins.push(new ExtractTextPlugin({
-      filename:'etp-[contenthash].css',
+      filename:'common.css',
       allChunks:false,
       disable:false,
       ignoreOrder:false
       //Disables order check (useful for CSS Modules!),
     }))
+    }else{
+      //But css will not be extracted because we use style-loader to support HMR, so css will be inlined!
+     commonConfig.plugins.push(new ExtractTextPlugin({
+      filename:'common.css',
+      allChunks:false,
+      disable:false,
+      ignoreOrder:false
+      //Disables order check (useful for CSS Modules!),
+      }))
     }
   }
  return commonConfig;

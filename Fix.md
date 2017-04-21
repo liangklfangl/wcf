@@ -52,3 +52,26 @@
   }
 }
 ```
+
+# 多学学include和exclude来提升效率
+# build方法应该允许外部调用来获取通用的webpack配置，build添加一个参数，第三个参数
+
+# 使用definePlugin来判断是否要开启react-hot
+
+```js
+   new webpack.DefinePlugin({
+          'process.env.NODE_ENV': '"production"'
+        }),
+```
+
+是不是用了这个插件就可以直接在浏览器代码中直接判断了
+
+# 在yo-react中也使用了DefinePlugin
+
+```js
+plugins: [
+        new webpack.DefinePlugin({
+          'process.env.NODE_ENV': '"test"'
+        })
+      ]
+```
