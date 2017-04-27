@@ -92,7 +92,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
     context:isWin() ? path.resolve(program.cwd.split(path.sep).join('/')) : path.resolve(program.cwd),
     //The base directory (absolute path!) for resolving the entry option
   	module: {
-      noParse:[/jquery/],
+      // noParse:[/jquery/],
       //Prevent webpack from parsing any files matching the given regular expression(s)
       //jquery has no other requires
 	    rules: [{
