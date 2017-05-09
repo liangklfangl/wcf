@@ -8,10 +8,11 @@ const R = require('ramda');
  * @return {[type]}        [description]
  */
 function concatValues (key, first, second){
-	return key!="module" && key!="plugins" ? second : first;
+   return key!="module" && key!="plugins" ? R.merge(first,second) : first;
+	// return key!="module" && key!="plugins" ? second : first;
 }
 /**
- * Unique webpack rule
+ * Unique webpack other configuration except for `module` and `plugins`
  * @param  {[type]} defaultWebpackConfig [description]
  * @return {[type]}                      [description]
  */

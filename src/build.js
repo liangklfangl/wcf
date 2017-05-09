@@ -46,7 +46,7 @@ if(program.dev){
 }
 
 //we inject html by HtmlWebpackPlugin
-if(program.dev){
+if(!program.dev){
   defaultWebpackConfig.plugins.push(new HtmlWebpackPlugin({
     title :"HtmlPlugin",
     // filename :"index.html",
@@ -61,7 +61,7 @@ if(program.dev){
   defaultWebpackConfig.plugins.push(new HtmlWebpackPlugin({
     title :"HtmlPlugin",
     // filename :"index.html",
-    template:path.join(__dirname,"../test/warning.html"),
+    template:useDefinedHtml || path.join(__dirname,"../test/warning.html"),
     // template:(useDefinedHtml ? useDefinedHtml : defaultHtml),
     //we must use html-loader here instead of file-loader
     inject :"body",
@@ -119,7 +119,7 @@ if(program.manifest){
     const customWebpackConfigPath = path.resolve(program.cwd,program.config || 'webpack.config.js');
     if(existsSync(customWebpackConfigPath)){
        const customConfig = require(customWebpackConfigPath);
-         defaultWebpackConfig=uniqueItem.dedupeItem(defaultWebpackConfig,customConfig);
+        defaultWebpackConfig=uniqueItem.dedupeItem(defaultWebpackConfig,customConfig);
        //unique webpack loaders
        if(exist.get(customConfig,"module.rules")){
           uniqueRule.dedupeRule(defaultWebpackConfig,customConfig);
