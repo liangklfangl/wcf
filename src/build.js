@@ -16,7 +16,7 @@ import uniquePlugin from "./updateRules/dedupePlugin";
 import uniqueItem from "./updateRules/dedupeItem";
 //Unique plugin and rule and item etc
 const exist = require('exist.js');
-
+const mangleWebpackConfig = require("./livehook");
 export default function build(program,callback){
  const defaultHtml = "../test/index.html";
  let useDefinedHtml ="";
@@ -135,6 +135,11 @@ if(program.manifest){
 
   //development mode , we should inject style-loader to support HMR!
   defaultWebpackConfig = updateRules(defaultWebpackConfig,program.dev);
+ //You can manipulate config last chance
+ //complicate see https://github.com/webpack/tapable
+  if(typeof program.hook == "function"){
+    mangleWebpackConfig(defaultWebpackConfig,program.hook);
+  }
   // console.log('-------------',util.inspect(defaultWebpackConfig,{showHidden:true,depth:4}));
   //in production mode
   //Whether we should start DevServer which serve file from memory instead of fileSystem
@@ -146,6 +151,7 @@ if(program.manifest){
   if(program.onlyCf){
     return defaultWebpackConfig;
   }
+  
   if(program.devServer){
     bundleWDevServer(defaultWebpackConfig,program);
   }else{

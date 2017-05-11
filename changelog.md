@@ -65,3 +65,23 @@ const webpackConfig = build(program,function(){});
 ```
 
 注意：配置karma和onlyCf是两种获取通用配置的方法，而且此时不会打包。前者是获取karma打包的配置，而后者只是简单获取打包配置而已！
+
+(6)2.0.25支持在打包之前允许用户最终修改webpack配置，其主要用途在于删除某一个插件。用法如下:
+```js
+//去除commonchunkplugin
+const program = {
+    onlyCf : true,
+    cwd : process.cwd(),
+    dev : true,
+    //不启动压缩
+    hook:function(webpackConfig){
+         const commonchunkpluginIndex = webpackConfig.plugins.findIndex(plugin => {
+           return plugin.constructor.name == "CommonsChunkPlugin"
+         });
+         webpackConfig.plugins.splice(commonchunkpluginIndex, 1);
+         return webpackConfig;
+    }
+  };
+//该hook会在打包之前执行，用于最后对webpack的配置进行修改
+```
+

@@ -249,7 +249,10 @@ if (module.hot) {
 
 (2)我们的ExtractTextPlugin采用的是contentHash,而不是chunkHash,原因可以阅读[Webpack中hash与chunkhash的区别，以及js与css的hash指纹解耦方案](http://www.cnblogs.com/ihardcoder/p/5623411.html)
 
-### 6.可能出现的问题
+### 6.新功能的添加
+新功能的添加不再修改readme文件，其功能都会在[changelog](./changelog.md)中说明。请查看该文件
+
+### 7.可能出现的问题
 
 (1)如果执行下面的命令不会自动打开浏览器，同时访问localhost:8080也无法访问
 
