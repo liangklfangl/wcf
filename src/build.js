@@ -151,7 +151,6 @@ if(program.manifest){
   if(program.onlyCf){
     return defaultWebpackConfig;
   }
-  
   if(program.devServer){
     bundleWDevServer(defaultWebpackConfig,program);
   }else{
