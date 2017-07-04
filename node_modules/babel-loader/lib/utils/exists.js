@@ -1,18 +1,11 @@
 "use strict";
 
-var fs = require("fs");
+module.exports = function (fileSystem, filename) {
+  var exists = false;
 
-module.exports = function (cache) {
-  cache = cache || {};
+  try {
+    exists = fileSystem.statSync(filename).isFile();
+  } catch (e) {}
 
-  return function (filename) {
-
-    if (!filename) {
-      return false;
-    }
-
-    cache[filename] = cache[filename] || fs.existsSync(filename);
-
-    return cache[filename];
-  };
+  return exists;
 };

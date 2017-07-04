@@ -78,6 +78,7 @@ plugins: [
 
 # 不要将babel-loader作为dependencies而是要作为devDependencies
 我们的两个loader即使是去掉exclude也是无法正常合并的，所以会导致两个规则被保留。最后解决方法是：wcf中不要求安装babel-loader，而是作为devDependencies，这样安装我们的webpackcc的时候不会安装babel-loader，最后我们require.resolve得到的都是同一个最高级的文件下的babel-loader。而且此时合并的时候options也会合并:
+
 ```js
  cacheDirectory: 'C:\\Users\\ADMINI~1\\AppData\\Local\\Temp' } }
  //即最后我们的cacheDirectory也会在options上
@@ -88,3 +89,5 @@ plugins: [
  exclude :path.resolve("node_modules")。我们的webpackcc只是被调用而已，所以其path.resolve和我们自己配置的path.resolve其实是同一个node_modules路径，这一点一定更要注意!
 
  # 最好实现钩子函数来在打包之前根据constructor删除某一个plugin
+
+# 老是显示找不到babel-loader模块

@@ -82,7 +82,7 @@ if(program.manifest){
       new webpack.optimize.UglifyJsPlugin({
          beautify:false,
          sourceMap :true,
-         // use SourceMaps to map error message locations to modules. 
+         // use SourceMaps to map error message locations to modules.
          //This slows down the compilation. (default: true)
          comments:false,
         //Defaults to preserving comments containing /*!, /**!, @preserve or @license.
