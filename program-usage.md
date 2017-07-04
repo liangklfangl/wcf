@@ -11,4 +11,4 @@
     };
     webpackConfig = build(buildParams);
 ```
-此时不会启动打包过程，而仅仅是用于获取到通用的webpack配置而已~~
+此时不会启动打包过程，而仅仅是用于获取到通用的webpack配置而已~
