@@ -98,4 +98,4 @@ const program = {
 </body>
 </html>
 ```
-解决方法:就是如果用户没有指定contentBase,那么我会相对htmlTemplate来设置contentBase的值
+解决方法:就是如果用户没有指定contentBase,那么我会相对htmlTemplate来设置contentBase的值，同时在mac os系统中我们不会每次都打开一个全新的tab，如果localhost:8000已经打开了一个chome的tab，那么下次打开的时候会重用这个tab

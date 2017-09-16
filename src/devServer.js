@@ -5,6 +5,7 @@ import addDevServerEntrypoints from "./entrys/updateEntry";
 import createDomain  from "./entrys/createDomain";
 import chokidar  from "chokidar";
 import prompt from 'react-dev-utils/prompt';
+import openBrowser from 'react-dev-utils/openBrowser';
 import chalk from "chalk";
 const util = require('util');
 const path = require('path');
@@ -13,32 +14,6 @@ const detect = require('detect-port');
 const execSync = require('child_process').execSync;
 let devServerOpt={};
 const DEFAULT_PORT = 8080;
-
-function openBrowser(url) {
-  //https://stackoverflow.com/questions/8683895/how-do-i-determine-the-current-operating-system-with-node-js
-  if (process.platform === 'darwin') {
-    try {
-      // Try our best to reuse existing tab
-      // on OS X Google Chrome with AppleScript
-      execSync('ps cax | grep "Google Chrome"');
-      execSync(
-        'osascript chrome.applescript ' + url,
-        {cwd: __dirname, stdio: 'ignore'}
-      );
-      return true;
-    } catch (err) {
-      // Ignore errors.
-    }
-  }
-  // Fallback to opn
-  // (It will always open new tab)
-  try {
-    opn(url);
-    return true;
-  } catch (err) {
-    return false;
-  }
-}
 
 function colorInfo(useColor, msg) {
   if(useColor)
