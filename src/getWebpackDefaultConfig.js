@@ -82,6 +82,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
     devServer:{
       publicPath:'/',
       open :true,
+      host:'0.0.0.0',
       port:8080,
       // contentBase:false,
       hot:false
