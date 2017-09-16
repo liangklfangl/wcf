@@ -99,3 +99,7 @@ const program = {
 </html>
 ```
 解决方法:就是如果用户没有指定contentBase,那么我会相对htmlTemplate来设置contentBase的值，同时在mac os系统中我们不会每次都打开一个全新的tab，如果localhost:8000已经打开了一个chome的tab，那么下次打开的时候会重用这个tab
+
+(8)2.0.30解决ip地址不能打开网页的问题
+ 
+ 解决方法:可以通过http://localhost:8080或者http://0.0.0:8080或者http://30.6.220.127打开页面了。解决办法可以[点击这里](https://github.com/webpack/webpack-dev-server/issues/147)
