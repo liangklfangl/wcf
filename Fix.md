@@ -91,3 +91,5 @@ plugins: [
  # 最好实现钩子函数来在打包之前根据constructor删除某一个plugin
 
 # 老是显示找不到babel-loader模块
+
+# 将webpack作为dependencies安装吧，不要每次都需要安装它

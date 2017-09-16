@@ -85,3 +85,17 @@ const program = {
 //该hook会在打包之前执行，用于最后对webpack的配置进行修改
 ```
 
+(7)2.0.28可以在htmlTemplate中通过相对路径引入其他css/图片资源
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <link rel="stylesheet" type="text/css" href="./index.css">
+</head>
+<body>
+  <div id="react-content">这里要插入js内容</div>
+</body>
+</html>
+```
+解决方法:就是如果用户没有指定contentBase,那么我会相对htmlTemplate来设置contentBase的值

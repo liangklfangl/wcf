@@ -20,7 +20,7 @@ function deltPathCwd(program,object){
      const finalPath=isWin ? path.resolve(program.cwd,object[key]).split(path.sep).join("/") : path.resolve(program.cwd,object[key]);
      object[key]=finalPath;
   }
-  return object; 
+  return object;
 }
 
 /**
@@ -42,7 +42,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
   let packagePath = path.join(program.cwd,'package.json');
   packagePath = isWin()? packagePath.split(path.sep).join("/"):packagePath;
   const packageConfig = existsSync(packagePath) ? require(packagePath) : {};
-  //we config the webpack by program 
+  //we config the webpack by program
   const jsFileName = program.hash ? '[name]-[chunkhash].js' : '[name].js';
   const cssFileName = program.hash ? '[name]-[chunkhash].css' : '[name].css';
   const commonName = program.hash ? 'common-[chunkhash].js' : 'common.js';
@@ -57,16 +57,16 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
   //   }
   //   const getThemeConfig = require(cfgPath);
   //   theme = getThemeConfig();
-  //   // if it's configured as a function ,the we invoke it 
+  //   // if it's configured as a function ,the we invoke it
   // } else if (packageConfig.theme && typeof(packageConfig.theme) === 'object') {
   //   theme = packageConfig.theme;
   // }
  const lf=isWin() ? path.join(__dirname, '../node_modules').split(path.sep).join("/") :path.join(__dirname, '../node_modules');
  const outputPath = isWin() ? path.join(program.cwd, './dest/').split(path.sep).join("/") : path.join(program.cwd, './dest/') ;
-  
+
  let commonConfig = {
-    cache:false, 
-     //Cache the generated webpack modules and chunks to improve build speed. 
+    cache:false,
+     //Cache the generated webpack modules and chunks to improve build speed.
      //Caching is enabled by default while in watch mode
    	output: {
       path: path.resolve(outputPath),
@@ -83,7 +83,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
       publicPath:'/',
       open :true,
       port:8080,
-      contentBase:false,
+      // contentBase:false,
       hot:false
     },
     devtool: program.devtool || "cheap-source-map",
@@ -95,7 +95,15 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
       // noParse:[/jquery/],
       //Prevent webpack from parsing any files matching the given regular expression(s)
       //jquery has no other requires
-	    rules: [{
+	    rules: [
+         {
+                test: /\.md$/,
+                loaders: [
+                  require.resolve("babel-loader"),
+                  require.resolve("./loaders/markdownDemoLoader.js")
+                ]
+         },
+            {
               test: /\.(png|jpg|jpeg|gif)(\?v=\d+\.\d+\.\d+)?$/i,
               use: {
               	 loader:require.resolve('url-loader'),
@@ -105,11 +113,11 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
               	 	limit : 10000
               	 }
               }
-             },{ 
-                 test: /\.json$/, 
+             },{
+                 test: /\.json$/,
                	 loader:require.resolve('json-loader')
-           }, { 
-           	test: /\.html?$/, 
+           }, {
+           	test: /\.html?$/,
            	use:{
            		loader: require.resolve('html-loader'),
            		options:{
@@ -123,7 +131,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
            //     return isNpmModule;
            //  },
             exclude :path.resolve("node_modules"),
-            //exclude node_modules folder, or we can use include config to include some path 
+            //exclude node_modules folder, or we can use include config to include some path
 	          use: [{
                loader: require.resolve("babel-loader"),
                options:getDefaultBabelConfig.getDefaultBabel()
@@ -136,14 +144,14 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
             //    var isNpmModule=!!path.match(/node_modules/);
             //    return isNpmModule;
             // },
-            //exclude node_modules folder, or we can use include config to include some path 
+            //exclude node_modules folder, or we can use include config to include some path
             use: [{
               loader:require.resolve('babel-loader'),
               options:getDefaultBabelConfig.getDefaultBabel()
             }]
           }
           //ExtractTextPlugin.extract here will throw `self is undefined!`
-          //We should not use 
+          //We should not use
          //https://github.com/postcss/postcss-loader
 	    ]
 	},
@@ -187,7 +195,7 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
       },
       //http://www.lcdf.org/gifsicle/
       jpegtran :{
-        progressive: false 
+        progressive: false
       }
    }),
    //autoprefixer plugin

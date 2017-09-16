@@ -1,12 +1,44 @@
 import WebpackDevServer from "webpack-dev-server/lib/Server";
 import opn from "opn";
 import webpack from "webpack";
-import portfinder from "portfinder";
 import addDevServerEntrypoints from "./entrys/updateEntry";
 import createDomain  from "./entrys/createDomain";
 import chokidar  from "chokidar";
+import prompt from 'react-dev-utils/prompt';
+import chalk from "chalk";
+const util = require('util');
+const path = require('path');
+const fs = require('fs');
+const detect = require('detect-port');
+const execSync = require('child_process').execSync;
 let devServerOpt={};
 const DEFAULT_PORT = 8080;
+
+function openBrowser(url) {
+  //https://stackoverflow.com/questions/8683895/how-do-i-determine-the-current-operating-system-with-node-js
+  if (process.platform === 'darwin') {
+    try {
+      // Try our best to reuse existing tab
+      // on OS X Google Chrome with AppleScript
+      execSync('ps cax | grep "Google Chrome"');
+      execSync(
+        'osascript chrome.applescript ' + url,
+        {cwd: __dirname, stdio: 'ignore'}
+      );
+      return true;
+    } catch (err) {
+      // Ignore errors.
+    }
+  }
+  // Fallback to opn
+  // (It will always open new tab)
+  try {
+    opn(url);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
 
 function colorInfo(useColor, msg) {
   if(useColor)
@@ -44,8 +76,16 @@ export default function bundleWDevServer(defaultWebpackConfig,program){
   if(devServerOpt.contentBase === undefined) {
       if(devServerOpt["contentBase"]) {
         devServerOpt.contentBase = devServerOpt["contentBase"];
-      } else if(devServerOpt["contentBase"] === false) {
-        devServerOpt.contentBase = false;
+      } else{
+         //set --content-base to folder of htmlTemplate
+        const selfDefinedContentBase = path.dirname(path.resolve(process.cwd(),program.htmlTemplate));
+        try{
+            fs.statSync(selfDefinedContentBase);
+        }catch(e){
+           throw new Error('contentBase you specified not exists!');
+        }
+
+        devServerOpt.contentBase = selfDefinedContentBase;
       }
     }
   //watch contentBase
@@ -61,18 +101,25 @@ export default function bundleWDevServer(defaultWebpackConfig,program){
   //open browser automatically
   if(devServerOpt["open"])
       devServerOpt.open = true;
-  //if a valid port is defined , we start server
-  if(devServerOpt.port) {
-    startDevServer(defaultWebpackConfig, devServerOpt);
-    return;
-  }
- 
-  //otherwise we choose a valid port
-  portfinder.basePort = 0;
-  portfinder.getPort(function(err, port) {
-    if(err) throw err;
+
+  const DEFAULT_PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : devServerOpt.port;
+  detect(DEFAULT_PORT).then((port) => {
+    // port not preocupied
+    if (port == DEFAULT_PORT) {
+       startDevServer(defaultWebpackConfig, devServerOpt);
+      return;
+    }
     devServerOpt.port = port;
-    startDevServer(defaultWebpackConfig, devServerOpt);
+    // port preocupied, we choose another one
+    const question =
+        chalk.yellow(`Something is already running on port ${DEFAULT_PORT}\n\nWould you like to run the app on another port instead?`);
+
+      prompt(question, true).then((shouldChangePort) => {
+        if (shouldChangePort) {
+           startDevServer(defaultWebpackConfig, devServerOpt);
+        }
+      });
+
   });
 }
 
@@ -137,9 +184,13 @@ function reportReadiness(uri, options) {
     console.log(`404s will fallback to ${colorInfo(useColor, options.historyApiFallback.index || "/index.html")}`);
   //historyApiFallback回退到index.html
   if(options.open) {
-    //打开一个页面
-    opn(uri).catch(function() {
-      console.log("Unable to open browser. If you are running in a headless environment, please do not use the open flag.");
-    });
+    openBrowser(uri);
+    //Code bellow will force to open a new tab even in mac os platform, we use return value of openBrowser function to
+    //prevent this
+    // opn(uri).catch(function() {
+    //   console.log("Unable to open browser. If you are running in a headless environment, please do not use the open flag.");
+    // });
   }
 }
+
+

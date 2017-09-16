@@ -20,7 +20,6 @@ const mangleWebpackConfig = require("./livehook");
 export default function build(program,callback){
  const defaultHtml = "../test/index.html";
  let useDefinedHtml ="";
-
  //With no html template configured, we use our own
  if(program.htmlTemplate){
     useDefinedHtml = existsSync(path.resolve(process.cwd(),program.htmlTemplate)) ? path.resolve(process.cwd(),program.htmlTemplate) : defaultHtml;

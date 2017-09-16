@@ -39,6 +39,7 @@ program
   .option('--devServer','whether serve file with webpack-dev-server')
   .option('--htmlTemplate <htmlTemplate>', 'set custom htmlTemplate file')
   .option('--config <customConfigFile>', 'set custom webpack config')
+  .option('--demo <custom demo path>', 'set custom demo path config')
   //set a custom config file while it must export an function receiving our defaultWebpackConfig as parameter
   .parse(process.argv);
 

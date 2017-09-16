@@ -3,8 +3,16 @@
  import chokidar  from "chokidar";
  import path from "path";
  import { existsSync } from 'fs';
-
+const util = require('util');
 export default function webpackWatch(defaultWebpackConfig,program){
+   //指定了demo的markdown文件地址
+   if(program.demo){
+     defaultWebpackConfig.entry = path.join(process.cwd(),program.demo);
+     // console.log('defaultWebpackConfig========>demo',util.inspect(defaultWebpackConfig,{showHidden:true,depth:3}));
+    const compiler = webpack(defaultWebpackConfig);
+     compiler.run(doneHandler.bind(program));
+     return ;
+   }
    const compiler = webpack(defaultWebpackConfig);
    let watching = null;
    const customWebpackPath = program.config ? path.resolve(program.cwd,program.config) : "";
