@@ -18,6 +18,7 @@ import uniqueItem from "./updateRules/dedupeItem";
 const exist = require("exist.js");
 const mangleWebpackConfig = require("./livehook");
 export default function build(program, callback) {
+  const commonName = program.hash ? 'common-[chunkhash].js' : 'common.js';
   const defaultHtml = "../test/index.html";
   let useDefinedHtml = "";
   //With no html template configured, we use our own
