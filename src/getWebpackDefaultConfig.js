@@ -131,7 +131,8 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
            //     var isNpmModule=!!path.match(/node_modules/);
            //     return isNpmModule;
            //  },
-            exclude :path.resolve("node_modules"),
+            exclude: /node_modules/,
+            // exclude :path.resolve("node_modules"),
             //exclude node_modules folder, or we can use include config to include some path
 	          use: [{
                loader: require.resolve("babel-loader"),
@@ -140,7 +141,8 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
 	        },
            {
             test: /\.jsx$/,
-            exclude :path.resolve("node_modules"),
+            // exclude :path.resolve("node_modules"),
+            exclude: /node_modules/,
             // exclude: function(path){
             //    var isNpmModule=!!path.match(/node_modules/);
             //    return isNpmModule;
@@ -171,11 +173,11 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
     }),
     // new webpack.optimize.OccurenceOrderPlugin(),
     //give most used chunk a smaller id
-    new webpack.optimize.CommonsChunkPlugin({
-         name:'common',
-         minChunks:2,
-         filename:commonName
-      }),
+    // new webpack.optimize.CommonsChunkPlugin({
+    //      name:'common',
+    //      minChunks:2,
+    //      filename:commonName
+    //   }),
     //CommonsChunkPlugin will boost rebuild performance
     // new webpack.optimize.MergeDuplicateChunksPlugin (),
     //merge them while duplicating

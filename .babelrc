@@ -1,12 +1,9 @@
 {
-  "presets": ["react", "es2015", "stage-0"],
-  "plugins": [
-    "transform-runtime",
-    "add-module-exports" ,
-     ['import', {
-      libraryName: 'antd',
-      style: 'css'
-    }]
+    "plugins": [
+        "add-module-exports", ["import", {
+            "libraryName": "antd",
+            "style": "css"
+        }]
 
-     ]
+    ]
 }
