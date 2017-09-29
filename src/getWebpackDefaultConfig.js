@@ -173,11 +173,6 @@ export default function getWebpackCommonConfig(program,isProgramInvoke){
     }),
     // new webpack.optimize.OccurenceOrderPlugin(),
     //give most used chunk a smaller id
-    // new webpack.optimize.CommonsChunkPlugin({
-    //      name:'common',
-    //      minChunks:2,
-    //      filename:commonName
-    //   }),
     //CommonsChunkPlugin will boost rebuild performance
     // new webpack.optimize.MergeDuplicateChunksPlugin (),
     //merge them while duplicating

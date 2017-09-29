@@ -175,6 +175,16 @@ export default function build(program, callback) {
   if (program.onlyCf) {
     return defaultWebpackConfig;
   }
+  //Extract to vendor.js
+  if (program.vendor) {
+    defaultWebpackConfig.plugins.push(
+      new webpack.optimize.CommonsChunkPlugin({
+        name: "common",
+        minChunks: 2,
+        filename: commonName
+      })
+    );
+  }
   if (program.devServer) {
     bundleWDevServer(defaultWebpackConfig, program);
   } else {

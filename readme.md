@@ -67,6 +67,10 @@ wcf --dev
 
 表示我们的版本号
 
+-V/--vendor
+
+表示我们是否添加commonChunkPlugin将引用次数过多的代码抽取出一个vendor.js
+
 -w/--watch
 
 表示是否启动webpack的watch模式，参数值可以是一个数字，默认是200ms。

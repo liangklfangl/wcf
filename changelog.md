@@ -104,7 +104,7 @@ const program = {
  
  解决方法:可以通过http://localhost:8080或者http://0.0.0:8080或者http://30.6.220.127打开页面了。解决办法可以[点击这里](https://github.com/webpack/webpack-dev-server/issues/147)
 
-(9)2.0.31支持webpack2的tree-shaking功能
+(9)2.0.31-0支持webpack2的tree-shaking功能
 
 如果你需要添加特定的babel插件，直接在你的项目根目录添加.babelrc就可以了，比如下面的配置会支持antd打包:
 ```js
