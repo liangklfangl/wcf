@@ -8,7 +8,6 @@ const path = require('path');
  */
 function p2jsonml(fileContent){
   const markdown = markTwain(fileContent);
-  // markdown.meta.filename = filename.split(path.sep).join("/");
   return markdown;
 };
 

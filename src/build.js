@@ -17,8 +17,9 @@ import uniqueItem from "./updateRules/dedupeItem";
 //Unique plugin and rule and item etc
 const exist = require("exist.js");
 const mangleWebpackConfig = require("./livehook");
+const BabiliPlugin = require("babili-webpack-plugin");
 export default function build(program, callback) {
-  const commonName = program.hash ? 'common-[chunkhash].js' : 'common.js';
+  const commonName = program.hash ? "common-[chunkhash].js" : "common.js";
   const defaultHtml = "../test/index.html";
   let useDefinedHtml = "";
   //With no html template configured, we use our own
@@ -66,7 +67,13 @@ export default function build(program, callback) {
         inject: "body",
         cache: false,
         xhtml: false
-      })
+      }),
+      new BabiliPlugin(
+        {},
+        {
+          test: /\.(js|jsx)$/
+        }
+      )
     );
   } else {
     defaultWebpackConfig.plugins.push(
@@ -96,27 +103,27 @@ export default function build(program, callback) {
     //https://github.com/mishoo/UglifyJS2
     defaultWebpackConfig.plugins = [
       ...defaultWebpackConfig.plugins,
-      new webpack.optimize.UglifyJsPlugin({
-        beautify: false,
-        sourceMap: true,
-        // use SourceMaps to map error message locations to modules.
-        //This slows down the compilation. (default: true)
-        comments: false,
-        //Defaults to preserving comments containing /*!, /**!, @preserve or @license.
-        output: {
-          ascii_only: true
-        },
-        compress: {
-          warnings: false,
-          //no warnings when remove unused code,
-          drop_console: true,
-          //drop console
-          collapse_vars: true,
-          //Collapse single-use var and const definitions when possible.
-          reduce_vars: true
-          // Improve optimization on variables assigned with and used as constant values.
-        }
-      }),
+      // new webpack.optimize.UglifyJsPlugin({
+      //   beautify: false,
+      //   sourceMap: true,
+      //   // use SourceMaps to map error message locations to modules.
+      //   //This slows down the compilation. (default: true)
+      //   comments: false,
+      //   //Defaults to preserving comments containing /*!, /**!, @preserve or @license.
+      //   output: {
+      //     ascii_only: true
+      //   },
+      //   compress: {
+      //     warnings: false,
+      //     //no warnings when remove unused code,
+      //     drop_console: true,
+      //     //drop console
+      //     collapse_vars: true,
+      //     //Collapse single-use var and const definitions when possible.
+      //     reduce_vars: true
+      //     // Improve optimization on variables assigned with and used as constant values.
+      //   }
+      // }),
       new webpack.DefinePlugin({
         "process.env.NODE_ENV": JSON.stringify(
           process.env.NODE_ENV || "production"
