@@ -1,11 +1,11 @@
 {
     "name": "webpackcc",
-    "version": "2.0.31-14",
+    "version": "2.0.31-15",
     "description": "",
     "main": "index.js",
     "publishConfig": {
-    "registry": "http://registry.npm.alibaba-inc.com"
-  },
+        "registry": "http://registry.npm.alibaba-inc.com"
+    },
     "scripts": {
         "clean": "rimraf lib",
         "build": "npm run clean && babel src --out-dir lib",
