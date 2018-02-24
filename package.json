@@ -27,9 +27,7 @@
         "lib",
         "test"
     ],
-    "publishConfig": {
-        "registry": "https://registry.npmjs.org/"
-    },
+
     "author": "liangklfangl",
     "license": "ISC",
     "bugs": {
