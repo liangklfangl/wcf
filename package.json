@@ -1,6 +1,6 @@
 {
     "name": "webpackcc",
-    "version": "2.0.31-8",
+    "version": "2.0.31-9",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -22,16 +22,27 @@
     "entry": {
         "index": "./src/demoGenerator/entry.js"
     },
-    "files": ["bin", "lib", "test"],
-    "publishConfig": { "registry": "https://registry.npmjs.org/" },
+    "files": [
+        "bin",
+        "lib",
+        "test"
+    ],
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/"
+    },
     "author": "liangklfangl",
     "license": "ISC",
     "bugs": {
         "url": "https://github.com/liangklfangl/wcf/issues"
     },
     "babel": {
-        "presets": ["es2015-ie", "stage-0"],
-        "plugins": ["add-module-exports"]
+        "presets": [
+            "es2015-ie",
+            "stage-0"
+        ],
+        "plugins": [
+            "add-module-exports"
+        ]
     },
     "dependencies": {
         "autoprefixer": "^6.7.3",
