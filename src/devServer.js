@@ -52,17 +52,20 @@ export default function bundleWDevServer(defaultWebpackConfig, program) {
     if (devServerOpt["contentBase"]) {
       devServerOpt.contentBase = devServerOpt["contentBase"];
     } else {
+      let selfDefinedContentBase;
       //set --content-base to folder of htmlTemplate
-      const selfDefinedContentBase = path.dirname(
-        path.resolve(process.cwd(), program.htmlTemplate)
-      );
-      try {
-        fs.statSync(selfDefinedContentBase);
-      } catch (e) {
-        throw new Error("contentBase you specified not exists!");
+      // 指定了htmlTemplate才设置contentBase检测为htmlTemplate位置
+      if (program.htmlTemplate) {
+        selfDefinedContentBase = path.dirname(
+          path.resolve(process.cwd(), program.htmlTemplate)
+        );
+        try {
+          fs.statSync(selfDefinedContentBase);
+        } catch (e) {
+          throw new Error("contentBase you specified not exists!");
+        }
+        devServerOpt.contentBase = selfDefinedContentBase;
       }
-
-      devServerOpt.contentBase = selfDefinedContentBase;
     }
   }
   //watch contentBase

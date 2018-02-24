@@ -12,7 +12,6 @@ const util = require('util');
  *第一个参数是markdown的内容
  */
 module.exports = function markdown2htmlPreview (content){
-  console.log('markdown2htmlPreview------this===',this);
   if (this.cacheable) {
     this.cacheable();
   }
