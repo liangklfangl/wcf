@@ -142,12 +142,11 @@ export default function build(program, callback) {
   }
   //User defined webpack.config.js to update our common webpack config
   if (program.config) {
-    //defaultWebpackConfig = mergeCustomConfig(defaultWebpackConfig, resolve(program.cwd, program.config || 'webpack.config.js'));
     const customWebpackConfigPath = path.resolve(
       program.cwd,
-      program.config || "webpack.config.js"
+      typeof program.config =="object" ? '' : program.config || "webpack.config.js"
     );
-    if (existsSync(customWebpackConfigPath)) {
+    if (typeof program.config!=="object"&&existsSync(customWebpackConfigPath)) {
       const customConfig = require(customWebpackConfigPath);
       defaultWebpackConfig = uniqueItem.dedupeItem(
         defaultWebpackConfig,
@@ -162,11 +161,26 @@ export default function build(program, callback) {
         uniquePlugin.dedupePlugin(defaultWebpackConfig, customConfig);
       }
       if (program.karma) uniquePlugin.optimizeKarmaPlugin(defaultWebpackConfig);
+    }else{
+      // 可以是一个对象，比如程序使用，此时直接合并即可
+      defaultWebpackConfig = uniqueItem.dedupeItem(
+        defaultWebpackConfig,
+        program.config
+      );
+      if (exist.get(program.config, "module.rules")) {
+        uniqueRule.dedupeRule(defaultWebpackConfig, program.config);
+      }
+      //unique our plugins
+      if (exist.get(program.config, "plugins")) {
+        uniquePlugin.dedupePlugin(defaultWebpackConfig, program.config);
+      }
+      // 通过程序设置entry
+      if(exist.get(program.config, "entry")){
+        defaultWebpackConfig.entry = program.config.entry;
+      }
     }
   }
-
-  //development mode , we should inject style-loader to support HMR!
-  defaultWebpackConfig = updateRules(defaultWebpackConfig, program.dev);
+  defaultWebpackConfig = updateRules(defaultWebpackConfig, program.dev,program.config&&program.config.disableCSSModules);
   //You can manipulate config last chance
   //complicate see https://github.com/webpack/tapable
   if (typeof program.hook == "function") {
@@ -197,7 +211,7 @@ export default function build(program, callback) {
     bundleWDevServer(defaultWebpackConfig, program);
   } else {
     //we use watch method of webpack
-    webpackWatch(defaultWebpackConfig, program);
+    webpackWatch(defaultWebpackConfig, program,callback);
   }
   return defaultWebpackConfig;
 }

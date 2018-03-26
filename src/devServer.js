@@ -34,6 +34,7 @@ function colorError(useColor, msg) {
  * @return {[type]}                      [description]
  */
 export default function bundleWDevServer(defaultWebpackConfig, program) {
+  // console.log('defaultWebpackConfig的值为==='+JSON.stringify(defaultWebpackConfig));
   const devServerOpt = defaultWebpackConfig.devServer || {};
   //we get Server.js not webpack-dev-server command line , so we must open browser by ourself!
   if (!devServerOpt.host) {
@@ -79,16 +80,18 @@ export default function bundleWDevServer(defaultWebpackConfig, program) {
   }
   //open browser automatically
   if (devServerOpt["open"]) devServerOpt.open = true;
-  console.log(
-    "打包的devServer配置为:",
-    util.inspect(devServerOpt, { showHidden: true, depth: 3 })
-  );
+  // console.log(
+  //   "打包的devServer配置为:",
+  //   util.inspect(devServerOpt, { showHidden: true, depth: 3 })
+  // );
+
   const DEFAULT_PORT = process.env.PORT
     ? parseInt(process.env.PORT, 10)
     : devServerOpt.port;
   detect(DEFAULT_PORT).then(port => {
     // port not preocupied
     if (port == DEFAULT_PORT) {
+      // console.log('webpack打包的配置为====='+JSON.stringify(defaultWebpackConfig));
       startDevServer(defaultWebpackConfig, devServerOpt);
       return;
     }
@@ -97,7 +100,7 @@ export default function bundleWDevServer(defaultWebpackConfig, program) {
     const question = chalk.yellow(
       `Something is already running on port ${DEFAULT_PORT}\n\nWould you like to run the app on another port instead?`
     );
-
+   
     prompt(question, true).then(shouldChangePort => {
       if (shouldChangePort) {
         startDevServer(defaultWebpackConfig, devServerOpt);
@@ -117,7 +120,6 @@ function startDevServer(wpOpt, options) {
   //Add "webpack/hot/only-dev-server","webpack/hot/dev-server" and ${require.resolve("../../client/")}?${domain}
   //to entry files
   let compiler;
-
   try {
     compiler = webpack(wpOpt);
     //begin to webpack compile
