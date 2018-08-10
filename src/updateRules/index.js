@@ -836,7 +836,6 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin';
 export default function updateRules(wpOpt,isDev,disableCSSModules){
   //如果开启了css modules，那么添加进去
  if(!disableCSSModules){
-  delete wpOpt.disableCSSModules;
    for(let i=0;i<cssModuleEnabledConfiguration.length;i++){
           wpOpt.module.rules.push(cssModuleEnabledConfiguration[i]);
     }
@@ -853,5 +852,6 @@ delete wpOpt.disableCSSModules;
            wpOpt.module.rules.push(production[j]);
     }
  }
+  delete wpOpt.disableCSSModules;
   return wpOpt;
 }
