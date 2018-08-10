@@ -63,11 +63,11 @@ export default function getWebpackCommonConfig(program, isProgramInvoke) {
     delete program.config.useBabelrc;
   }
 
-  if (program.config && program.config.extraBabelPlugins) {
+  if (program.config && program.config.extraBabelPlugins!=undefined) {
     delete program.config.extraBabelPlugins;
   }
 
-  if (program.config && program.config.extraBabelPresets) {
+  if (program.config && program.config.extraBabelPresets!=undefined) {
     delete program.config.extraBabelPresets;
   }
 

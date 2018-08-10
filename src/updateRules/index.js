@@ -842,6 +842,8 @@ export default function updateRules(wpOpt,isDev,disableCSSModules){
     }
     return wpOpt;
  }
+//disableCSSModules为true,表示禁止css modules
+delete wpOpt.disableCSSModules;
  if(isDev){
     for(let i=0;i<development.length;i++){
           wpOpt.module.rules.push(development[i]);
