@@ -227,6 +227,10 @@ export default function getWebpackCommonConfig(program, isProgramInvoke) {
             }
           }
         },
+         {
+        test: /\.svg$/,
+        loader: require.resolve('svg-inline-loader')
+    },
         {
           test: /\.json$/,
           loader: require.resolve("json-loader")
