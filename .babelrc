@@ -1,10 +1,14 @@
 {
     "presets": ["react", "es2015", "stage-0"],
     "plugins": [
-        "babel-plugin-add-module-exports","transform-runtime", ["import", {
-            "libraryName": "antd",
-            "style": "css"
-        }]
-
+        "babel-plugin-add-module-exports",
+        "transform-decorators-legacy",
+        "transform-runtime", [
+            "import",
+            {
+                "libraryName": "antd",
+                "style": "css"
+            }
+        ]
     ]
 }

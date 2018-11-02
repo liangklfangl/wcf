@@ -1,6 +1,6 @@
 import { tmpdir } from "os";
 function getDefaultBabelConfig(
-  useBabelrc = false,
+  useBabelrc = true,
   extraBabelPlugins = [],
   extraBabelPresets = []
 ) {
