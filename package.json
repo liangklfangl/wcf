@@ -3,6 +3,9 @@
   "version": "2.1.7",
   "description": "",
   "main": "index.js",
+  "publishConfig": {
+  "registry": "http://registry.npm.alibaba-inc.com"
+},
   "scripts": {
     "clean": "rimraf lib",
     "build": "npm run clean && babel src --out-dir lib",
