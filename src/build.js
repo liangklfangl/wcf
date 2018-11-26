@@ -39,15 +39,13 @@ export default function build(program, callback) {
   if (program.publichPath) {
     defaultWebpackConfig.output.publicPath = program.publicPath;
   }
+  console.log('program.disableCSSModules==='+program.disableCSSModules);
   //update public path
   if (program.stj) {
     defaultWebpackConfig.plugins.push(
-      new StatsPlugin(
-        program.stj,
-        {
-          //options passed to stats.json
-        }
-      )
+      new StatsPlugin(program.stj, {
+        //options passed to stats.json
+      })
     );
   }
   //inject HotModuleReplacementPlugin
@@ -144,9 +142,14 @@ export default function build(program, callback) {
   if (program.config) {
     const customWebpackConfigPath = path.resolve(
       program.cwd,
-      typeof program.config =="object" ? '' : program.config || "webpack.config.js"
+      typeof program.config == "object"
+        ? ""
+        : program.config || "webpack.config.js"
     );
-    if (typeof program.config!=="object"&&existsSync(customWebpackConfigPath)) {
+    if (
+      typeof program.config !== "object" &&
+      existsSync(customWebpackConfigPath)
+    ) {
       const customConfig = require(customWebpackConfigPath);
       defaultWebpackConfig = uniqueItem.dedupeItem(
         defaultWebpackConfig,
@@ -161,7 +164,7 @@ export default function build(program, callback) {
         uniquePlugin.dedupePlugin(defaultWebpackConfig, customConfig);
       }
       if (program.karma) uniquePlugin.optimizeKarmaPlugin(defaultWebpackConfig);
-    }else{
+    } else {
       // 可以是一个对象，比如程序使用，此时直接合并即可
       defaultWebpackConfig = uniqueItem.dedupeItem(
         defaultWebpackConfig,
@@ -175,12 +178,17 @@ export default function build(program, callback) {
         uniquePlugin.dedupePlugin(defaultWebpackConfig, program.config);
       }
       // 通过程序设置entry
-      if(exist.get(program.config, "entry")){
+      if (exist.get(program.config, "entry")) {
         defaultWebpackConfig.entry = program.config.entry;
       }
     }
   }
-  defaultWebpackConfig = updateRules(defaultWebpackConfig, program.dev,program.config&&program.config.disableCSSModules);
+  defaultWebpackConfig = updateRules(
+    defaultWebpackConfig,
+    program.dev,
+    (program.config && program.config.disableCSSModules) ||
+      !!program.disableCSSModules
+  );
   //You can manipulate config last chance
   //complicate see https://github.com/webpack/tapable
   if (typeof program.hook == "function") {
@@ -211,7 +219,7 @@ export default function build(program, callback) {
     bundleWDevServer(defaultWebpackConfig, program);
   } else {
     //we use watch method of webpack
-    webpackWatch(defaultWebpackConfig, program,callback);
+    webpackWatch(defaultWebpackConfig, program, callback);
   }
   return defaultWebpackConfig;
 }

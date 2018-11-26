@@ -42,6 +42,7 @@ program
     .option('--config <customConfigFile>', 'set custom webpack config')
     .option('--demo <custom demo path>', 'set custom demo path config')
     .option('-V, --vendor', 'whether extract vendor.js')
+    .option('-D, --disableCSSModules', 'whether disable css modules')
     //set a custom config file while it must export an function receiving our defaultWebpackConfig as parameter
     .parse(process.argv);
 
