@@ -63,11 +63,11 @@ export default function getWebpackCommonConfig(program, isProgramInvoke) {
     delete program.config.useBabelrc;
   }
 
-  if (program.config && program.config.extraBabelPlugins!=undefined) {
+  if (program.config && program.config.extraBabelPlugins != undefined) {
     delete program.config.extraBabelPlugins;
   }
 
-  if (program.config && program.config.extraBabelPresets!=undefined) {
+  if (program.config && program.config.extraBabelPresets != undefined) {
     delete program.config.extraBabelPresets;
   }
 
@@ -186,6 +186,7 @@ export default function getWebpackCommonConfig(program, isProgramInvoke) {
       extensions: [
         ".js",
         ".jsx",
+        ".tsx",
         ".json",
         ".less",
         ".scss",
@@ -216,6 +217,7 @@ export default function getWebpackCommonConfig(program, isProgramInvoke) {
       //Prevent webpack from parsing any files matching the given regular expression(s)
       //jquery has no other requires
       rules: [
+        { test: /\.tsx?$/, loader: require.resolve("ts-loader") },
         {
           test: /\.(png|jpg|jpeg|gif)(\?v=\d+\.\d+\.\d+)?$/i,
           use: {
@@ -227,10 +229,10 @@ export default function getWebpackCommonConfig(program, isProgramInvoke) {
             }
           }
         },
-         {
-        test: /\.svg$/,
-        loader: require.resolve('svg-inline-loader')
-    },
+        {
+          test: /\.svg$/,
+          loader: require.resolve("svg-inline-loader")
+        },
         {
           test: /\.json$/,
           loader: require.resolve("json-loader")
