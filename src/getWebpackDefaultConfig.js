@@ -8,6 +8,7 @@ import autoprefixer from "autoprefixer";
 import LoaderOptionsPlugin from "webpack/lib/LoaderOptionsPlugin";
 import ConcatPlugin from "./plugins/ConcatPlugin";
 import updateRules from "./updateRules/index.js";
+const tsImportPluginFactory = require("ts-import-plugin");
 function isWin() {
   return process.platform.indexOf("win") === 0;
 }
@@ -217,7 +218,26 @@ export default function getWebpackCommonConfig(program, isProgramInvoke) {
       //Prevent webpack from parsing any files matching the given regular expression(s)
       //jquery has no other requires
       rules: [
-        { test: /\.tsx?$/, loader: require.resolve("ts-loader") },
+        {
+          test: /\.tsx?$/,
+          loader: require.resolve("ts-loader"),
+          options: {
+            transpileOnly: true,
+            getCustomTransformers: () => ({
+              before: [
+                tsImportPluginFactory({
+                  libraryName: "antd",
+                  libraryDirectory: "lib",
+                  style: true
+                })
+              ]
+            }),
+            compilerOptions: {
+              module: "es2015"
+            }
+          },
+          exclude: /node_modules/
+        },
         {
           test: /\.(png|jpg|jpeg|gif)(\?v=\d+\.\d+\.\d+)?$/i,
           use: {
